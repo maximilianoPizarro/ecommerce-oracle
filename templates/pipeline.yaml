@@ -86,7 +86,7 @@ metadata:
     {{- include "ecommerce-oracle.labels" . | nindent 4 }}
 spec:
   params:
-    - default: 'image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/ecommerce-oracle'
+    - default: 'image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/{{ include "ecommerce-oracle.fullname" . }}'
       name: IMAGE_NAME
       type: string
     - default: /app
@@ -97,9 +97,6 @@ spec:
       type: string
     - default: ecommerce-0.0.1-SNAPSHOT.jar
       name: APP_JAR_VERSION
-      type: string
-    - default: ecommerce
-      name: APP_NAME
       type: string
   tasks:
     - name: maven
@@ -203,7 +200,7 @@ spec:
     - name: s2i-binary-build
       params:
         - name: SCRIPT
-          value: oc start-build ecommerce-oracle --from-file=$(workspaces.manifest-dir.path)/$(params.PATH_CONTEXT)/target/$(params.APP_JAR_VERSION)
+          value: oc start-build {{ include "ecommerce-oracle.fullname" . }} --from-file=$(workspaces.manifest-dir.path)/$(params.PATH_CONTEXT)/target/$(params.APP_JAR_VERSION)
         - name: VERSION
           value: latest
       runAfter:
@@ -214,26 +211,5 @@ spec:
       workspaces:
         - name: manifest-dir
           workspace: workspace
-    - name: helm-upgrade-from-repo
-      params:
-        - name: helm_repo
-          value: 'https://maximilianopizarro.github.io/ecommerce-oracle/'
-        - name: chart_name
-          value: ecommerce-oracle
-        - name: release_version
-          value: 0.1.0
-        - name: release_name
-          value: helm-release
-        - name: release_namespace
-          value: ''
-        - name: overwrite_values
-          value: image.repository=$(params.IMAGE_NAME)
-        - name: helm_image
-          value: 'docker.io/lachlanevenson/k8s-helm@sha256:5c792f29950b388de24e7448d378881f68b3df73a7b30769a6aa861061fd08ae'
-      runAfter:
-        - s2i-binary-build
-      taskRef:
-        kind: ClusterTask
-        name: helm-upgrade-from-repo
   workspaces:
     - name: workspace
