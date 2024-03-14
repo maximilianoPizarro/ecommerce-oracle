@@ -5,7 +5,7 @@ metadata:
 components:
   - name: tools
     container:  
-      image: 'quay.io/maximilianopizarro/ecommerce'
+      image: 'quay.io/maximilianopizarro/jhipster-devspace'
       mountSources: true
       cpuLimit: '4'
       cpuRequest: '1'
@@ -20,7 +20,7 @@ components:
           path: /home/user/.npm
       endpoints:
         - exposure: public
-          name: jhipster-devspace
+          name: ecommerce
           protocol: https
           targetPort: 8080          
       env:
