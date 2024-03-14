@@ -1,6 +1,6 @@
 schemaVersion: 2.1.0
 metadata:
-  name: ecommerce
+  name: ecommerce-oracle
   version: 2.1.0
 components:
   - name: tools
@@ -20,7 +20,7 @@ components:
           path: /home/user/.npm
       endpoints:
         - exposure: public
-          name: ecommerce
+          name: ecommerce-oracle
           protocol: https
           targetPort: 8080          
       env:
