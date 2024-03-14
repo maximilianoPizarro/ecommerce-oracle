@@ -79,36 +79,32 @@ metadata:
   name: ecommerce-oracle
 spec:
   params:
-    - default: >-
-        image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/ecommerce-oracle
+    - default: 'image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/ecommerce-oracle'
       name: IMAGE_NAME
       type: string
     - default: /app
       name: PATH_CONTEXT
       type: string
-    - default: >-
-        registry.redhat.io/ubi8/openjdk-17@sha256:af305e087061cbaa4107ce0b304a1ef987f6b54bae3f75bfd529cfd084cba9b5
+    - default: 'registry.redhat.io/ubi8/openjdk-17@sha256:af305e087061cbaa4107ce0b304a1ef987f6b54bae3f75bfd529cfd084cba9b5'
       name: MAVEN_IMAGE
       type: string
-    - default: ecommerce-oracle-0.0.1-SNAPSHOT.jar
+    - default: ecommerce-0.0.1-SNAPSHOT.jar
       name: APP_JAR_VERSION
       type: string
-    - default: ecommerce-oracle
+    - default: ecommerce
       name: APP_NAME
       type: string
   tasks:
     - name: maven
       params:
         - name: MAVEN_IMAGE
-          value: >-
-            registry.redhat.io/ubi8/openjdk-17@sha256:af305e087061cbaa4107ce0b304a1ef987f6b54bae3f75bfd529cfd084cba9b5
+          value: 'registry.redhat.io/ubi8/openjdk-17@sha256:af305e087061cbaa4107ce0b304a1ef987f6b54bae3f75bfd529cfd084cba9b5'
         - name: GOALS
           value:
             - clean
             - verify
             - '-Pprod'
-            - >-
-              -Dmaven.repo.local=$(workspaces.source.path)/$(params.PATH_CONTEXT)/.m2
+            - '-Dmaven.repo.local=$(workspaces.source.path)/$(params.PATH_CONTEXT)/.m2'
             - '-Dmaven.test.skip=true'
         - name: MAVEN_MIRROR_URL
           value: ''
@@ -145,7 +141,7 @@ spec:
         - name: url
           value: 'https://github.com/maximilianoPizarro/ecommerce-oracle'
         - name: revision
-          value: master
+          value: main
         - name: refspec
           value: ''
         - name: submodules
@@ -171,8 +167,7 @@ spec:
         - name: verbose
           value: 'true'
         - name: gitInitImage
-          value: >-
-            registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:c4b2183f7c7997bd401d86b33eefb637b3ef2fa90618e875106292cd69a15c14
+          value: 'registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:c4b2183f7c7997bd401d86b33eefb637b3ef2fa90618e875106292cd69a15c14'
         - name: userHome
           value: /home/git
       taskRef:
@@ -201,9 +196,7 @@ spec:
     - name: s2i-binary-build
       params:
         - name: SCRIPT
-          value: >-
-            oc start-build ecommerce-oracle
-            --from-file=$(workspaces.manifest-dir.path)/$(params.PATH_CONTEXT)/target/$(params.APP_JAR_VERSION)
+          value: oc start-build ecommerce-oracle --from-file=$(workspaces.manifest-dir.path)/$(params.PATH_CONTEXT)/target/$(params.APP_JAR_VERSION)
         - name: VERSION
           value: latest
       runAfter:
@@ -214,19 +207,26 @@ spec:
       workspaces:
         - name: manifest-dir
           workspace: workspace
-    - name: deploy
+    - name: helm-upgrade-from-repo
       params:
-        - name: SCRIPT
-          value: oc rollout status deploy/$(params.APP_NAME)
-        - name: VERSION
-          value: latest
+        - name: helm_repo
+          value: 'https://maximilianopizarro.github.io/ecommerce-oracle/'
+        - name: chart_name
+          value: ecommerce-oracle
+        - name: release_version
+          value: 0.1.0
+        - name: release_name
+          value: helm-release
+        - name: release_namespace
+          value: ''
+        - name: overwrite_values
+          value: image.repository=$(params.IMAGE_NAME)
+        - name: helm_image
+          value: 'docker.io/lachlanevenson/k8s-helm@sha256:5c792f29950b388de24e7448d378881f68b3df73a7b30769a6aa861061fd08ae'
       runAfter:
         - s2i-binary-build
       taskRef:
         kind: ClusterTask
-        name: openshift-client
-      workspaces:
-        - name: manifest-dir
-          workspace: workspace
+        name: helm-upgrade-from-repo
   workspaces:
     - name: workspace
