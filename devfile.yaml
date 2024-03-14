@@ -44,7 +44,7 @@ commands:
     exec:
       label: "Package the application"    
       component: tools             
-      workingDir: ${PROJECTS_ROOT}/ecommerce/ecommerce
+      workingDir: ${PROJECTS_ROOT}/ecommerce
       commandLine: "mvn clean install -DskipTest"
       group:
         kind: build
@@ -53,7 +53,7 @@ commands:
     exec:
       label: "run-app"
       component: tools
-      workingDir: ${PROJECT_SOURCE}/ecommerce/ecommerce
+      workingDir: ${PROJECT_SOURCE}/ecommerce
       commandLine: "./mvnw"
       group:
         kind: run
