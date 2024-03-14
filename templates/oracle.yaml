@@ -1,0 +1,133 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "ecommerce-oracle.labels" . | nindent 4 }}
+  name: oracle12c
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oracle12c
+  strategy:
+    activeDeadlineSeconds: 21600
+    recreateParams:
+      timeoutSeconds: 600
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: oracle12c
+        deployment: oracle12c
+        app.openshift.io/runtime: java 
+    spec:
+      containers:
+      - name: oracle12c
+        image: 'quay.io/maximilianopizarro/tfi-oracle12c:12'
+        env:
+          - name: PATH
+            value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/u01/app/oracle/product/12.2.0/dbhome_1/bin
+          - name: ORACLE_SID
+            value: ORCLCDB
+          - name: ORACLE_HOME
+            value: /u01/app/oracle/product/12.2.0/dbhome_1               
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 1521
+          protocol: TCP
+        - containerPort: 5500
+          protocol: TCP
+        resources:
+          limits:
+            memory: 2Gi
+          requests:
+            memory: 2Gi
+        securityContext: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - name: oracle-configuration-volume
+          mountPath: /post-script.sh
+          subPath: post-script.sh        
+        - mountPath: /ORCL
+          name: orcl
+        - mountPath: /u01
+          name: u01  
+        - mountPath: /u02
+          name: u02 
+        - mountPath: /u03
+          name: u03
+        - mountPath: /u04
+          name: u04                                        
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: oracle-configuration-volume
+        configMap:
+          name: oracle-configuration
+          defaultMode: 420      
+      - name: orcl
+        emptyDir: {}
+      - name: u01
+        emptyDir: {}
+      - name: u02
+        emptyDir: {}
+      - name: u03
+        emptyDir: {}
+      - name: u04
+        emptyDir: {}                                               
+  test: false
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    {{- include "ecommerce-oracle.labels" . | nindent 4 }}    
+  name: oracle12c
+spec:
+  ports:
+  - name: 1521-tcp
+    port: 1521
+    protocol: TCP
+    targetPort: 1521
+  - name: 5500-tcp
+    port: 5500
+    protocol: TCP
+    targetPort: 5500
+  selector:
+    deploymentconfig: oracle12c
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: oracle-configuration
+  labels:
+    {{- include "ecommerce-oracle.labels" . | nindent 4 }}    
+data:
+  post-script.sh: |-
+    #/bin/sh
+    NEW_ORA=/u01/app/oracle/product/12.2.0/dbhome_1/dbs/init$DB_SID.ora
+
+    sqlplus sys/Oradoc_db1 as sysdba 2>&1 <<EOF
+    create spfile from pfile='$NEW_ORA';
+    startup mount;
+    alter database open resetlogs;
+    alter database rename global_name to $DB_SID.$DB_DOMAIN;
+    show parameter spfile;
+    show parameter encrypt_new_tablespaces;
+    alter user sys identified by "$DB_PASSWD";
+    alter user system identified by "$DB_PASSWD";
+    ALTER DATABASE OPEN;
+    alter session set "_ORACLE_SCRIPT"=true;
+    exit;
+    EOF
+
+    select status from v$instance;  

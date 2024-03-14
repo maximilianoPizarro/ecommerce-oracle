@@ -1,22 +1,15 @@
-apiVersion: helm.openshift.io/v1beta1
-kind: ProjectHelmChartRepository
-metadata:
-  name: ecommerce-oracle
-spec:
-  connectionConfig:
-    url: 'https://maximilianopizarro.github.io/ecommerce-oracle/'
-  name: JHipster Oracle Helm Chart Example
----
 kind: BuildConfig
 apiVersion: build.openshift.io/v1
 metadata:
-  name: ecommerce-oracle
+  name: {{ include "ecommerce-oracle.fullname" . }}
+  labels:
+    {{- include "ecommerce-oracle.labels" . | nindent 4 }}
 spec:
   nodeSelector: null
   output:
     to:
       kind: ImageStreamTag
-      name: 'ecommerce-oracle:latest'
+      name: '{{ include "ecommerce-oracle.fullname" . }}:latest'
   resources: {}
   successfulBuildsHistoryLimit: 5
   failedBuildsHistoryLimit: 5
@@ -34,10 +27,22 @@ spec:
     binary: {}
   runPolicy: Serial
 ---
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: {{ include "ecommerce-oracle.fullname" . }}
+  labels:
+    {{- include "ecommerce-oracle.labels" . | nindent 4 }}
+spec:
+  lookupPolicy:
+    local: false
+---
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: npm
+  labels:
+    {{- include "ecommerce-oracle.labels" . | nindent 4 }}  
 spec:
   description: >-
     This task can be used to run npm goals on a project.
@@ -76,7 +81,9 @@ spec:
 apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
-  name: ecommerce-oracle
+  name: {{ include "ecommerce-oracle.fullname" . }}
+  labels:
+    {{- include "ecommerce-oracle.labels" . | nindent 4 }}
 spec:
   params:
     - default: 'image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/ecommerce-oracle'
