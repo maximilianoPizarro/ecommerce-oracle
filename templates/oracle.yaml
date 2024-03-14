@@ -99,7 +99,8 @@ spec:
     protocol: TCP
     targetPort: 5500
   selector:
-    deploymentconfig: oracle12c
+    app: oracle12c
+    deployment: oracle12c    
   sessionAffinity: None
   type: ClusterIP
 status:
