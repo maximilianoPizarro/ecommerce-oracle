@@ -17,13 +17,13 @@
 ## Add repository
 
 ```bash
-helm repo add botpress https://maximilianopizarro.github.io/botpress-helm-chart/
+helm repo add ecommerce-oracle https://maximilianopizarro.github.io/ecommerce-oracle/
 ```
 
 ## Install Chart with parameters
 
 ```bash
-helm install my-botpress botpress/botpress --version VERSION --set route.host="Your-WilcardDNS-hostname",env.EXTERNAL_URL="Your-WilcardDNS-with-https"
+helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version VERSION"
 ```
 
 ```bash
