@@ -1,11 +1,11 @@
 schemaVersion: 2.1.0
 metadata:
-  name: jhipster-devspace
+  name: ecommerce
   version: 2.1.0
 components:
   - name: tools
     container:  
-      image: 'quay.io/maximilianopizarro/jhipster-devspace'
+      image: 'quay.io/maximilianopizarro/ecommerce'
       mountSources: true
       cpuLimit: '4'
       cpuRequest: '1'
