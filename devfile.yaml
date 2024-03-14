@@ -39,22 +39,3 @@ components:
   - name: npm
     volume:
       size: 512Mi            
-commands:
-  - id: build
-    exec:
-      label: "Package the application"    
-      component: tools             
-      workingDir: ${PROJECTS_ROOT}/ecommerce
-      commandLine: "mvn clean install -DskipTest"
-      group:
-        kind: build
-        isDefault: true
-  - id: run-app
-    exec:
-      label: "run-app"
-      component: tools
-      workingDir: ${PROJECT_SOURCE}/ecommerce
-      commandLine: "./mvnw"
-      group:
-        kind: run
-        isDefault: true        
