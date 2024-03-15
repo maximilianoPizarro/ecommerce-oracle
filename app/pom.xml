@@ -1042,7 +1042,7 @@
             <dependencies>     
                 		<!-- Oracle -->
         <dependency>
-            <groupId>com.oracle.jdbc</groupId>
+            <groupId>com.oracle</groupId>
             <artifactId>ojdbc8</artifactId>
             <version>12.2.0.1</version>
         </dependency>
