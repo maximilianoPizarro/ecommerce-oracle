@@ -10,6 +10,16 @@
     <name>Ecommerce</name>
     <description>Description for Ecommerce</description>
 
+  	<repositories>
+       <repository>
+            <id>localrsp</id>
+            <url>file:///${project.basedir}/repository</url>
+        </repository>
+
+		<!-- jhipster-needle-maven-repository -->
+	</repositories>
+
+
     <properties>
         <!--
             Build properties
@@ -1036,12 +1046,6 @@
             <artifactId>ojdbc8</artifactId>
             <version>12.2.0.1</version>
         </dependency>
-
-         <dependency> 
-   			<groupId>com.oracle</groupId>
-   			<artifactId>ucp</artifactId>
-   			<version>12.2.0.1</version> 
- 		</dependency>
                 
             </dependencies>
         </profile>
