@@ -49,9 +49,3 @@ helm uninstall ecommerce-oracle
 helm package . -d charts
 helm repo index .
 ```
-
-## Build image
-
-```bash
-oc apply -f pipeline.yaml
-```
