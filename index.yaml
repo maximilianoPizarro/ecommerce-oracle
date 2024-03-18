@@ -3,9 +3,9 @@ entries:
   ecommerce-oracle:
   - apiVersion: v2
     appVersion: 0.0.1-SNAPSHOT
-    created: "2024-03-14T22:53:03.24233004Z"
+    created: "2024-03-18T17:48:17.159452701Z"
     description: A JHipster Oracle Helm chart example for Kubernetes
-    digest: de8aa7983ad7791d7ad83f708fabb31f13bfbe5d3d3c3c5306f06bf3a413b2fa
+    digest: ecd357ac570a436c044ee6de7d49e3df9160758383ddcf2425fbc8a77f0f49d1
     home: https://maximilianopizarro.github.io/ecommerce-oracle/
     icon: https://raw.githubusercontent.com/maximilianoPizarro/ecommerce-oracle/main/oracle-icon.png
     maintainers:
@@ -17,4 +17,4 @@ entries:
     urls:
     - charts/ecommerce-oracle-0.1.0.tgz
     version: 0.1.0
-generated: "2024-03-14T22:53:03.241385085Z"
+generated: "2024-03-18T17:48:17.15849051Z"

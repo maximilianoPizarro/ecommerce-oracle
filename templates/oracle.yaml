@@ -20,7 +20,7 @@ spec:
       labels:
         app: oracle12c
         deployment: oracle12c
-        app.openshift.io/runtime: java 
+        app.openshift.io/runtime: oracle 
     spec:
       containers:
       - name: oracle12c

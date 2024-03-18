@@ -1,4 +1,4 @@
-# Deploy Jhipster Oracle Helm Charts example on Red Hat OpenShift
+# Deploy JHipster Oracle Helm Charts example on Red Hat OpenShift
 <p align="left">
 <img src="https://img.shields.io/badge/redhat-CC0000?style=for-the-badge&logo=redhat&logoColor=white" alt="Redhat">
 <img src="https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white" alt="kubernetes">
@@ -23,19 +23,19 @@ helm repo add ecommerce-oracle https://maximilianopizarro.github.io/ecommerce-or
 ## Install Chart with parameters
 
 ```bash
-helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version VERSION"
+helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version "VERSION"
 ```
 
 ```bash
 Example:
-helm install my-ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.0
+helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.0
 ```
 
 
 ## Uninstall Chart
 
 ```bash
-helm uninstall my-ecommerce-oracle
+helm uninstall ecommerce-oracle
 ```
 
 ## Package Info
