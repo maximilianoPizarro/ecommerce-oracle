@@ -115,20 +115,19 @@ metadata:
 data:
   post-script.sh: |-
     #/bin/sh
-    NEW_ORA=/u01/app/oracle/product/12.2.0/dbhome_1/dbs/init$DB_SID.ora
+data:
+  post-script.sh: |-
+    #/bin/sh
+    DB_SID=ORCLCDB
+    NEW_ORA=/u01/app/oracle/product/12.2.0/dbhome_1/dbs/init$DB_SID.ora  
 
     sqlplus sys/Oradoc_db1 as sysdba 2>&1 <<EOF
     create spfile from pfile='$NEW_ORA';
     startup mount;
-    alter database open resetlogs;
     alter database rename global_name to $DB_SID.$DB_DOMAIN;
     show parameter spfile;
     show parameter encrypt_new_tablespaces;
-    alter user sys identified by "$DB_PASSWD";
-    alter user system identified by "$DB_PASSWD";
     ALTER DATABASE OPEN;
     alter session set "_ORACLE_SCRIPT"=true;
-    exit;
+    exit;    
     EOF
-
-    select status from v$instance;  

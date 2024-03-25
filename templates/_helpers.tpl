@@ -48,7 +48,6 @@ Selector labels
 {{- define "ecommerce-oracle.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "ecommerce-oracle.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-app.openshift.io/runtime: java
 {{- end }}
 
 {{/*

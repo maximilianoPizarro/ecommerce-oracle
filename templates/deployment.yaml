@@ -4,6 +4,7 @@ metadata:
   name: {{ include "ecommerce-oracle.fullname" . }}
   labels:
     {{- include "ecommerce-oracle.labels" . | nindent 4 }}
+    app.openshift.io/runtime: java
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}

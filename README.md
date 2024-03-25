@@ -8,6 +8,10 @@
 <a href="https://artifacthub.io/packages/search?repo=ecommerce-oracle"><img src="https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/ecommerce-oracle" alt="Artifact Hub" /></a>
 </p>
 
+<p align="left">
+  <img src="https://github.com/maximilianoPizarro/ecommerce-oracle/app/ecommerce-oracle-topology.PNG?raw=true" width="900" title="Run On Openshift">
+  <img src="https://github.com/maximilianoPizarro/ecommerce-oracle/app/ecommerce-oracle-home.PNG?raw=true" width="900" title="Run On Openshift">  
+</p>
 
 # Installation
 
@@ -23,12 +27,12 @@ helm repo add ecommerce-oracle https://maximilianopizarro.github.io/ecommerce-or
 ## Install Chart with parameters
 
 ```bash
-helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version "VERSION"
+helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version "VERSION" --set route.host=ecommerce-oracle-<NAMESPACE>.apps.sandbox-m2.ll9k.p1.openshiftapps.com
 ```
 
 ```bash
 Example:
-helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.0
+helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.0 --set route.host=ecommerce-oracle-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com
 ```
 
 

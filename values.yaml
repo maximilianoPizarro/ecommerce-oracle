@@ -5,7 +5,8 @@
 replicaCount: 1
 
 image:
-  repository: image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/ecommerce-oracle
+#  repository: image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/ecommerce-oracle
+  repository: quay.io/maximilianopizarro/ecommerce-oracle
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
@@ -89,6 +90,6 @@ affinity: {}
 env:
   SPRING_PROFILES_ACTIVE: prod,api-docs
   JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET: YlhrdGMyVmpjbVYwTFhSdmEyVnVMWFJ2TFdOb1lXNW5aUzFwYmkxd2NtOWtkV04wYVc5dUxXRnVaQzEwYnkxclpXVndMV2x1TFdFdGMyVmpkWEpsTFhCc1lXTmwK
-  SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle12c.maximilianopizarro5-dev.svc.cluster.local:1521:ORCLCDB
+  SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle12c:1521:ORCLCDB
   SPRING_DATASOURCE_USERNAME: sys as sysdba
   SPRING_DATASOURCE_PASSWORD: Oradoc_db1  
