@@ -9,8 +9,8 @@
 </p>
 
 <p align="left">
-  <img src="https://github.com/maximilianoPizarro/ecommerce-oracle/app/ecommerce-oracle-topology.PNG?raw=true" width="900" title="Run On Openshift">
-  <img src="https://github.com/maximilianoPizarro/ecommerce-oracle/app/ecommerce-oracle-home.PNG?raw=true" width="900" title="Run On Openshift">  
+  <img src="https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/app/ecommerce-oracle-topology.PNG?raw=true" width="900" title="Run On Openshift">
+  <img src="https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/app/ecommerce-oracle-home.PNG?raw=true" width="900" title="Run On Openshift">  
 </p>
 
 # Installation
