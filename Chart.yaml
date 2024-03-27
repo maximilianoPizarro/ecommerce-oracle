@@ -30,7 +30,7 @@ maintainers: # (optional)
     email: maximiliano.pizarro.5@gmail.com
     url: http://www.linkedin.com/in/maximiliano-gregorio-pizarro-consultor-it
 
-icon: https://raw.githubusercontent.com/maximilianoPizarro/ecommerce-oracle/main/oracle-icon.png
+icon: https://raw.githubusercontent.com/maximilianoPizarro/ecommerce-oracle/main/jhipster-icon.png
 
 dependencies:
 - name: oracle12c
