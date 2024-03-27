@@ -32,7 +32,7 @@ helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version "VERSI
 
 ```bash
 Example:
-helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.0 --set route.host=ecommerce-oracle-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com
+helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.1 --set route.host=ecommerce-oracle-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com
 ```
 
 
@@ -50,6 +50,7 @@ helm uninstall ecommerce-oracle
 ## Package Steps
 
 ```bash
-helm package . -d charts
+helm dependency build
+helm package -u . -d charts
 helm repo index .
 ```
