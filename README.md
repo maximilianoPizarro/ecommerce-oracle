@@ -50,6 +50,7 @@ helm uninstall ecommerce-oracle
 ## Package Steps
 
 ```bash
+helm repo add oracle-helm-charts https://maximilianopizarro.github.io/oracle-helm-charts/
 helm dependency build
 helm package -u . -d charts
 helm repo index .
