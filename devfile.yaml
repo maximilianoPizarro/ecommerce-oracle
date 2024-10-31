@@ -1,7 +1,22 @@
 schemaVersion: 2.1.0
 metadata:
-  name: ecommerce-oracle
+  name: 
   version: 2.1.0
+schemaVersion: 2.2.2
+metadata:
+  name: ecommerce-oracle
+  version: 2.33.0
+  description: Ecommerce Oracle Example Helm Chart on DevSpaces Red Hat OpenShift
+  displayName: Ecommerce Oracle
+  icon: https://raw.githubusercontent.com/maximilianoPizarro/ecommerce-oracle/main/jhipster-icon.png
+  website: https://maximilianopizarro.github.io/ecommerce-oracle
+  tags:
+    - Java
+    - JHipster
+    - Angular
+    - Spring
+  language: Java
+  projectType: springboot       
 components:
   - name: tools
     container:  

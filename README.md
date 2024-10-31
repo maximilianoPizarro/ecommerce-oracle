@@ -8,7 +8,7 @@
 <a href="https://artifacthub.io/packages/search?repo=ecommerce-oracle"><img src="https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/ecommerce-oracle" alt="Artifact Hub" /></a>
 </p>
 
-[![Open](https://img.shields.io/static/v1?label=Open%20in&message=Developer%20Sandbox&logo=eclipseche&color=FDB940&labelColor=525C86)](https://workspaces.openshift.com/#https://github.com/maximilianoPizarro/ecommerce-oracle/tree/main?storageType=ephemeral&devfilePath=app)
+[![Open](https://img.shields.io/static/v1?label=Open%20in&message=Developer%20Sandbox&logo=eclipseche&color=FDB940&labelColor=525C86)](https://workspaces.openshift.com/#https://github.com/maximilianoPizarro/ecommerce-oracle/tree/main?storageType=ephemeral)
 
 
 <p align="left">
@@ -41,7 +41,7 @@ helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version "VERSI
 
 ```bash
 Example:
-helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.1 --set route.host=ecommerce-oracle-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com
+helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.2
 ```
 
 
