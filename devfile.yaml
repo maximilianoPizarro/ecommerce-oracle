@@ -19,6 +19,11 @@ metadata:
   projectType: springboot
 projects:
   - name: ecommerce-oracle
+    git:
+      remotes:
+        origin: 'https://github.com/maximilianoPizarro/ecommerce-oracle'
+      checkoutFrom:
+        revision: main  
 components:
   - name: tools
     container:  
