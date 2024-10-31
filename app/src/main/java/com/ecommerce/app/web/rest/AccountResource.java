@@ -1,29 +1,43 @@
 package com.ecommerce.app.web.rest;
 
 import com.ecommerce.app.domain.User;
-import com.ecommerce.app.repository.UserRepository;
-import com.ecommerce.app.security.SecurityUtils;
+import com.ecommerce.app.service.InvalidPasswordException;
 import com.ecommerce.app.service.MailService;
 import com.ecommerce.app.service.UserService;
-import com.ecommerce.app.service.dto.AdminUserDTO;
+import com.ecommerce.app.service.UsernameAlreadyUsedException;
 import com.ecommerce.app.service.dto.PasswordChangeDTO;
-import com.ecommerce.app.web.rest.errors.*;
+import com.ecommerce.app.service.dto.UserDTO;
+import com.ecommerce.app.web.rest.errors.EmailAlreadyUsedException;
+import com.ecommerce.app.web.rest.errors.InvalidPasswordWebException;
+import com.ecommerce.app.web.rest.errors.LoginAlreadyUsedException;
 import com.ecommerce.app.web.rest.vm.KeyAndPasswordVM;
 import com.ecommerce.app.web.rest.vm.ManagedUserVM;
+import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.PermitAll;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import java.util.*;
-import org.apache.commons.lang3.StringUtils;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
+import java.security.Principal;
+import java.util.Optional;
+import java.util.concurrent.CompletionStage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * REST controller for managing the current user's account.
  */
-@RestController
-@RequestMapping("/api")
+@Path("/api")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@RequestScoped
 public class AccountResource {
+
+    private final Logger log = LoggerFactory.getLogger(AccountResource.class);
 
     private static class AccountResourceException extends RuntimeException {
 
@@ -32,150 +46,177 @@ public class AccountResource {
         }
     }
 
-    private final Logger log = LoggerFactory.getLogger(AccountResource.class);
+    final MailService mailService;
 
-    private final UserRepository userRepository;
+    final UserService userService;
 
-    private final UserService userService;
-
-    private final MailService mailService;
-
-    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService) {
-        this.userRepository = userRepository;
-        this.userService = userService;
+    @Inject
+    public AccountResource(MailService mailService, UserService userService) {
         this.mailService = mailService;
+        this.userService = userService;
     }
 
     /**
-     * {@code POST  /register} : register the user.
+     * {@code GET /account} : get the current user.
+     *
+     * @return the current user.
+     * @throws RuntimeException {@code 500 (Internal Server Error)} if the user couldn't be returned.
+     */
+    @GET
+    @Path("/account")
+    @Authenticated
+    public UserDTO getAccount(@Context SecurityContext ctx) {
+        return userService
+            .getUserWithAuthoritiesByLogin(ctx.getUserPrincipal().getName())
+            .map(UserDTO::new)
+            .orElseThrow(() -> new AccountResourceException("User could not be found"));
+    }
+
+    /**
+     * {@code POST /account} : update the current user information.
+     *
+     * @param userDTO the current user information.
+     * @throws EmailAlreadyUsedException {@code 400 (Bad Request)} if the email is already used.
+     * @throws RuntimeException          {@code 500 (Internal Server Error)} if the user login wasn't found.
+     */
+    @POST
+    @Path("/account")
+    public Response saveAccount(@Valid UserDTO userDTO, @Context SecurityContext ctx) {
+        var userLogin = Optional.ofNullable(ctx.getUserPrincipal().getName()).orElseThrow(
+            () -> new AccountResourceException("Current user login not found")
+        );
+        var existingUser = User.findOneByEmailIgnoreCase(userDTO.email);
+        if (existingUser.isPresent() && (!existingUser.get().login.equalsIgnoreCase(userLogin))) {
+            throw new EmailAlreadyUsedException();
+        }
+        var user = User.findOneByLogin(userLogin);
+        if (!user.isPresent()) {
+            throw new AccountResourceException("User could not be found");
+        }
+        userService.updateUser(userLogin, userDTO.firstName, userDTO.lastName, userDTO.email, userDTO.langKey, userDTO.imageUrl);
+        return Response.ok().build();
+    }
+
+    /**
+     * {@code POST /register} : register the user.
      *
      * @param managedUserVM the managed user View Model.
-     * @throws InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
+     * @throws InvalidPasswordWebException  {@code 400 (Bad Request)} if the password is incorrect.
      * @throws EmailAlreadyUsedException {@code 400 (Bad Request)} if the email is already used.
      * @throws LoginAlreadyUsedException {@code 400 (Bad Request)} if the login is already used.
      */
-    @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM) {
-        if (isPasswordLengthInvalid(managedUserVM.getPassword())) {
-            throw new InvalidPasswordException();
+    @POST
+    @Path("/register")
+    @PermitAll
+    public CompletionStage<Response> registerAccount(@Valid ManagedUserVM managedUserVM) {
+        if (!checkPasswordLength(managedUserVM.password)) {
+            throw new InvalidPasswordWebException();
         }
-        User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
-        mailService.sendActivationEmail(user);
+        try {
+            var user = userService.registerUser(managedUserVM, managedUserVM.password);
+            return mailService.sendActivationEmail(user).thenApply(it -> Response.created(null).build());
+        } catch (UsernameAlreadyUsedException e) {
+            throw new LoginAlreadyUsedException();
+        } catch (com.ecommerce.app.service.EmailAlreadyUsedException e) {
+            throw new EmailAlreadyUsedException();
+        }
     }
 
     /**
-     * {@code GET  /activate} : activate the registered user.
+     * {@code GET /activate} : activate the registered user.
      *
      * @param key the activation key.
      * @throws RuntimeException {@code 500 (Internal Server Error)} if the user couldn't be activated.
      */
-    @GetMapping("/activate")
-    public void activateAccount(@RequestParam(value = "key") String key) {
-        Optional<User> user = userService.activateRegistration(key);
+    @GET
+    @Path("/activate")
+    @PermitAll
+    public void activateAccount(@QueryParam(value = "key") String key) {
+        var user = userService.activateRegistration(key);
         if (!user.isPresent()) {
             throw new AccountResourceException("No user was found for this activation key");
         }
     }
 
     /**
-     * {@code GET  /account} : get the current user.
+     * {@code GET /authenticate} : check if the user is authenticated, and return its login.
      *
-     * @return the current user.
-     * @throws RuntimeException {@code 500 (Internal Server Error)} if the user couldn't be returned.
+     * @param ctx the request security context.
+     * @return the login if the user is authenticated.
      */
-    @GetMapping("/account")
-    public AdminUserDTO getAccount() {
-        return userService
-            .getUserWithAuthorities()
-            .map(AdminUserDTO::new)
-            .orElseThrow(() -> new AccountResourceException("User could not be found"));
+    @GET
+    @Path("/authenticate")
+    @PermitAll
+    @Produces(MediaType.TEXT_PLAIN)
+    public String isAuthenticated(@Context SecurityContext ctx) {
+        log.debug("REST request to check if the current user is authenticated");
+        return Optional.ofNullable(ctx.getUserPrincipal()).map(Principal::getName).orElse("");
     }
 
     /**
-     * {@code POST  /account} : update the current user information.
-     *
-     * @param userDTO the current user information.
-     * @throws EmailAlreadyUsedException {@code 400 (Bad Request)} if the email is already used.
-     * @throws RuntimeException {@code 500 (Internal Server Error)} if the user login wasn't found.
-     */
-    @PostMapping("/account")
-    public void saveAccount(@Valid @RequestBody AdminUserDTO userDTO) {
-        String userLogin = SecurityUtils
-            .getCurrentUserLogin()
-            .orElseThrow(() -> new AccountResourceException("Current user login not found"));
-        Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
-        if (existingUser.isPresent() && (!existingUser.orElseThrow().getLogin().equalsIgnoreCase(userLogin))) {
-            throw new EmailAlreadyUsedException();
-        }
-        Optional<User> user = userRepository.findOneByLogin(userLogin);
-        if (!user.isPresent()) {
-            throw new AccountResourceException("User could not be found");
-        }
-        userService.updateUser(
-            userDTO.getFirstName(),
-            userDTO.getLastName(),
-            userDTO.getEmail(),
-            userDTO.getLangKey(),
-            userDTO.getImageUrl()
-        );
-    }
-
-    /**
-     * {@code POST  /account/change-password} : changes the current user's password.
+     * {@code POST /account/change-password} : changes the current user's password.
      *
      * @param passwordChangeDto current and new password.
-     * @throws InvalidPasswordException {@code 400 (Bad Request)} if the new password is incorrect.
+     * @throws InvalidPasswordWebException {@code 400 (Bad Request)} if the new password is incorrect.
      */
-    @PostMapping(path = "/account/change-password")
-    public void changePassword(@RequestBody PasswordChangeDTO passwordChangeDto) {
-        if (isPasswordLengthInvalid(passwordChangeDto.getNewPassword())) {
-            throw new InvalidPasswordException();
+    @POST
+    @Path("/account/change-password")
+    public Response changePassword(PasswordChangeDTO passwordChangeDto, @Context SecurityContext ctx) {
+        var userLogin = Optional.ofNullable(ctx.getUserPrincipal().getName()).orElseThrow(
+            () -> new AccountResourceException("Current user login not found")
+        );
+        if (!checkPasswordLength(passwordChangeDto.newPassword)) {
+            throw new InvalidPasswordWebException();
         }
-        userService.changePassword(passwordChangeDto.getCurrentPassword(), passwordChangeDto.getNewPassword());
+        try {
+            userService.changePassword(userLogin, passwordChangeDto.currentPassword, passwordChangeDto.newPassword);
+        } catch (InvalidPasswordException e) {
+            throw new InvalidPasswordWebException();
+        }
+        return Response.ok().build();
     }
 
     /**
-     * {@code POST   /account/reset-password/init} : Send an email to reset the password of the user.
+     * {@code POST /account/reset-password/init} : Send an email to reset the password of the user.
      *
      * @param mail the mail of the user.
      */
-    @PostMapping(path = "/account/reset-password/init")
-    public void requestPasswordReset(@RequestBody String mail) {
-        Optional<User> user = userService.requestPasswordReset(mail);
-        if (user.isPresent()) {
-            mailService.sendPasswordResetMail(user.orElseThrow());
-        } else {
-            // Pretend the request has been successful to prevent checking which emails really exist
-            // but log that an invalid attempt has been made
-            log.warn("Password reset requested for non existing mail");
-        }
+    @POST
+    @Path("/account/reset-password/init")
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Response requestPasswordReset(String mail) {
+        userService
+            .requestPasswordReset(mail)
+            .ifPresentOrElse(mailService::sendPasswordResetMail, () -> log.warn("Password reset requested for non existing mail"));
+        return Response.ok().build();
     }
 
     /**
-     * {@code POST   /account/reset-password/finish} : Finish to reset the password of the user.
+     * {@code POST /account/reset-password/finish} : Finish to reset the password of the user.
      *
      * @param keyAndPassword the generated key and the new password.
-     * @throws InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
-     * @throws RuntimeException {@code 500 (Internal Server Error)} if the password could not be reset.
+     * @throws InvalidPasswordWebException {@code 400 (Bad Request)} if the password is incorrect.
+     * @throws RuntimeException         {@code 500 (Internal Server Error)} if the password could not be reset.
      */
-    @PostMapping(path = "/account/reset-password/finish")
-    public void finishPasswordReset(@RequestBody KeyAndPasswordVM keyAndPassword) {
-        if (isPasswordLengthInvalid(keyAndPassword.getNewPassword())) {
-            throw new InvalidPasswordException();
+    @POST
+    @Path("/account/reset-password/finish")
+    public Response finishPasswordReset(KeyAndPasswordVM keyAndPassword) {
+        if (!checkPasswordLength(keyAndPassword.newPassword)) {
+            throw new InvalidPasswordWebException();
         }
-        Optional<User> user = userService.completePasswordReset(keyAndPassword.getNewPassword(), keyAndPassword.getKey());
+        var user = userService.completePasswordReset(keyAndPassword.newPassword, keyAndPassword.key);
 
         if (!user.isPresent()) {
             throw new AccountResourceException("No user was found for this reset key");
         }
+        return Response.ok().build();
     }
 
-    private static boolean isPasswordLengthInvalid(String password) {
+    private static boolean checkPasswordLength(String password) {
         return (
-            StringUtils.isEmpty(password) ||
-            password.length() < ManagedUserVM.PASSWORD_MIN_LENGTH ||
-            password.length() > ManagedUserVM.PASSWORD_MAX_LENGTH
+            !password.isEmpty() &&
+            password.length() >= ManagedUserVM.PASSWORD_MIN_LENGTH &&
+            password.length() <= ManagedUserVM.PASSWORD_MAX_LENGTH
         );
     }
 }

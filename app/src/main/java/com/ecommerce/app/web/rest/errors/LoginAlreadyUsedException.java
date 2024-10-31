@@ -1,11 +1,12 @@
 package com.ecommerce.app.web.rest.errors;
 
-@SuppressWarnings("java:S110") // Inheritance tree of classes should not be too deep
+import java.net.URI;
+
 public class LoginAlreadyUsedException extends BadRequestAlertException {
 
-    private static final long serialVersionUID = 1L;
+    public static final URI TYPE = URI.create(ErrorConstants.PROBLEM_BASE_URL + "/login-already-used");
 
     public LoginAlreadyUsedException() {
-        super(ErrorConstants.LOGIN_ALREADY_USED_TYPE, "Login name already used!", "userManagement", "userexists");
+        super(TYPE, "Login name already used!", "userManagement", "userexists");
     }
 }

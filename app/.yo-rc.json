@@ -1,25 +1,36 @@
 {
   "generator-jhipster": {
-    "applicationIndex": 0,
     "applicationType": "monolith",
     "authenticationType": "jwt",
     "baseName": "ecommerce",
+    "blueprints": [
+      {
+        "name": "generator-jhipster-quarkus",
+        "version": "3.2.0"
+      }
+    ],
     "buildTool": "maven",
-    "clientFramework": "vue",
-    "clientTheme": "solar",
-    "clientThemeVariant": "dark",
+    "cacheProvider": "no",
+    "clientFramework": "angular",
+    "clientTestFrameworks": [],
+    "clientTheme": "none",
+    "creationTimestamp": 1730408453950,
     "databaseType": "sql",
     "devDatabaseType": "h2Memory",
-    "devServerPort": 9060,
-    "enableTranslation": true,
-    "entities": ["Region", "Country"],
-    "jhipsterVersion": "8.1.0",
-    "jwtSecretKey": "MjkzZjQwMTNkNTE4YjA0ZWE4MDY3YTIwZTJlZWM1N2RiNjkxMTQ2YTdlMTg0NDA1ZmYxZjllM2E5ODQ4NWMwMmQzZmRkNDBmYzYzODU1MDg1ODUyM2JmZGY1ZjVkZWRkMGMxNjhjZWQ3OTc0YzE2NDBkYmY2NjA1YzhhZDhiMjQ=",
-    "languages": ["es", "en", "nl"],
-    "lastLiquibaseTimestamp": 1710424359000,
-    "nativeLanguage": "es",
-    "packageFolder": "com/ecommerce/app",
+    "devServerPort": 4200,
+    "enableHibernateCache": false,
+    "enableTranslation": false,
+    "entities": [],
+    "jhipsterVersion": "8.5.0",
+    "microfrontend": null,
+    "microfrontends": [],
+    "monorepository": true,
+    "nativeLanguage": "en",
     "packageName": "com.ecommerce.app",
-    "prodDatabaseType": "oracle"
+    "prodDatabaseType": "oracle",
+    "serverPort": null,
+    "skipCommitHook": true,
+    "testFrameworks": [],
+    "withAdminUi": true
   }
 }

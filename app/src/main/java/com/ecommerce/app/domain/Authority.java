@@ -1,5 +1,7 @@
 package com.ecommerce.app.domain;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -8,16 +10,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * An authority (a security role) used by Spring Security.
+ * An authority (a security role).
  */
 @Entity
 @Table(name = "jhi_authority")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Authority implements Serializable {
+@RegisterForReflection
+public class Authority extends PanacheEntityBase implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -25,13 +25,14 @@ public class Authority implements Serializable {
     @Size(max = 50)
     @Id
     @Column(length = 50)
-    private String name;
+    public String name;
 
-    public String getName() {
-        return name;
+    public Authority() {
+        //empty
     }
 
-    public void setName(String name) {
+    public Authority(String name) {
+        //for jsonb
         this.name = name;
     }
 
@@ -51,11 +52,8 @@ public class Authority implements Serializable {
         return Objects.hashCode(name);
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "Authority{" +
-            "name='" + name + '\'' +
-            "}";
+        return "Authority{" + "name='" + name + '\'' + "}";
     }
 }

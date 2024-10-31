@@ -1,27 +1,19 @@
 package com.ecommerce.app.web.rest.vm;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
 /**
  * View Model object for storing the user's key and password.
  */
+@RegisterForReflection
 public class KeyAndPasswordVM {
 
-    private String key;
+    public String key;
 
-    private String newPassword;
+    public String newPassword;
 
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
+    @Override
+    public String toString() {
+        return "KeyAndPasswordVM{" + "key='" + key + '\'' + ", newPassword='" + newPassword + '\'' + '}';
     }
 }

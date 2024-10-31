@@ -1,32 +1,14 @@
 package com.ecommerce.app.web.rest.errors;
 
-import java.io.Serializable;
+final class FieldErrorVM {
 
-public class FieldErrorVM implements Serializable {
+    public final String objectName;
+    public final String field;
+    public final String message;
 
-    private static final long serialVersionUID = 1L;
-
-    private final String objectName;
-
-    private final String field;
-
-    private final String message;
-
-    public FieldErrorVM(String dto, String field, String message) {
-        this.objectName = dto;
+    public FieldErrorVM(String objectName, String message, String field) {
+        this.objectName = objectName;
         this.field = field;
         this.message = message;
-    }
-
-    public String getObjectName() {
-        return objectName;
-    }
-
-    public String getField() {
-        return field;
-    }
-
-    public String getMessage() {
-        return message;
     }
 }

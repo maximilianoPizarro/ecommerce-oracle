@@ -1,7 +1,7 @@
 package com.ecommerce.app.security;
 
 /**
- * Constants for Spring Security authorities.
+ * Constants JHipster authorities.
  */
 public final class AuthoritiesConstants {
 

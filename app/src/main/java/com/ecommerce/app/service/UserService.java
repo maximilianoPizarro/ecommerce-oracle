@@ -3,181 +3,160 @@ package com.ecommerce.app.service;
 import com.ecommerce.app.config.Constants;
 import com.ecommerce.app.domain.Authority;
 import com.ecommerce.app.domain.User;
-import com.ecommerce.app.repository.AuthorityRepository;
-import com.ecommerce.app.repository.UserRepository;
 import com.ecommerce.app.security.AuthoritiesConstants;
-import com.ecommerce.app.security.SecurityUtils;
-import com.ecommerce.app.service.dto.AdminUserDTO;
+import com.ecommerce.app.security.BCryptPasswordHasher;
+import com.ecommerce.app.security.RandomUtil;
 import com.ecommerce.app.service.dto.UserDTO;
+import io.quarkus.panache.common.Page;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.CacheManager;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import tech.jhipster.security.RandomUtil;
 
-/**
- * Service class for managing users.
- */
-@Service
+@ApplicationScoped
 @Transactional
 public class UserService {
 
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    private final UserRepository userRepository;
+    final BCryptPasswordHasher passwordHasher;
 
-    private final PasswordEncoder passwordEncoder;
-
-    private final AuthorityRepository authorityRepository;
-
-    private final CacheManager cacheManager;
-
-    public UserService(
-        UserRepository userRepository,
-        PasswordEncoder passwordEncoder,
-        AuthorityRepository authorityRepository,
-        CacheManager cacheManager
-    ) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.authorityRepository = authorityRepository;
-        this.cacheManager = cacheManager;
+    @Inject
+    public UserService(BCryptPasswordHasher passwordHasher) {
+        this.passwordHasher = passwordHasher;
     }
 
     public Optional<User> activateRegistration(String key) {
         log.debug("Activating user for activation key {}", key);
-        return userRepository
-            .findOneByActivationKey(key)
-            .map(user -> {
-                // activate given user for the registration key.
-                user.setActivated(true);
-                user.setActivationKey(null);
-                this.clearUserCaches(user);
-                log.debug("Activated user: {}", user);
-                return user;
-            });
+        return User.findOneByActivationKey(key).map(user -> {
+            // activate given user for the registration key.
+            user.activated = true;
+            user.activationKey = null;
+            log.debug("Activated user: {}", user);
+            return user;
+        });
+    }
+
+    public void changePassword(String login, String currentClearTextPassword, String newPassword) {
+        User.findOneByLogin(login).ifPresent(user -> {
+            String currentEncryptedPassword = user.password;
+            if (!passwordHasher.checkPassword(currentClearTextPassword, currentEncryptedPassword)) {
+                throw new InvalidPasswordException();
+            }
+            user.password = passwordHasher.hash(newPassword);
+            log.debug("Changed password for User: {}", user);
+        });
     }
 
     public Optional<User> completePasswordReset(String newPassword, String key) {
         log.debug("Reset user password for reset key {}", key);
-        return userRepository
-            .findOneByResetKey(key)
-            .filter(user -> user.getResetDate().isAfter(Instant.now().minus(1, ChronoUnit.DAYS)))
+        return User.findOneByResetKey(key)
+            .filter(user -> user.resetDate.isAfter(Instant.now().minusSeconds(86400)))
             .map(user -> {
-                user.setPassword(passwordEncoder.encode(newPassword));
-                user.setResetKey(null);
-                user.setResetDate(null);
-                this.clearUserCaches(user);
+                user.password = passwordHasher.hash(newPassword);
+                user.resetKey = null;
+                user.resetDate = null;
                 return user;
             });
     }
 
     public Optional<User> requestPasswordReset(String mail) {
-        return userRepository
-            .findOneByEmailIgnoreCase(mail)
-            .filter(User::isActivated)
+        return User.findOneByEmailIgnoreCase(mail)
+            .filter(user -> user.activated)
             .map(user -> {
-                user.setResetKey(RandomUtil.generateResetKey());
-                user.setResetDate(Instant.now());
-                this.clearUserCaches(user);
+                user.resetKey = RandomUtil.generateResetKey();
+                user.resetDate = Instant.now();
                 return user;
             });
     }
 
-    public User registerUser(AdminUserDTO userDTO, String password) {
-        userRepository
-            .findOneByLogin(userDTO.getLogin().toLowerCase())
-            .ifPresent(existingUser -> {
-                boolean removed = removeNonActivatedUser(existingUser);
-                if (!removed) {
-                    throw new UsernameAlreadyUsedException();
-                }
-            });
-        userRepository
-            .findOneByEmailIgnoreCase(userDTO.getEmail())
-            .ifPresent(existingUser -> {
-                boolean removed = removeNonActivatedUser(existingUser);
-                if (!removed) {
-                    throw new EmailAlreadyUsedException();
-                }
-            });
-        User newUser = new User();
-        String encryptedPassword = passwordEncoder.encode(password);
-        newUser.setLogin(userDTO.getLogin().toLowerCase());
+    public User registerUser(UserDTO userDTO, String password) {
+        User.findOneByLogin(userDTO.login.toLowerCase()).ifPresent(existingUser -> {
+            var removed = removeNonActivatedUser(existingUser);
+            if (!removed) {
+                throw new UsernameAlreadyUsedException();
+            }
+        });
+        User.findOneByEmailIgnoreCase(userDTO.email).ifPresent(existingUser -> {
+            var removed = removeNonActivatedUser(existingUser);
+            if (!removed) {
+                throw new EmailAlreadyUsedException();
+            }
+        });
+        var newUser = new User();
+        newUser.login = userDTO.login.toLowerCase();
         // new user gets initially a generated password
-        newUser.setPassword(encryptedPassword);
-        newUser.setFirstName(userDTO.getFirstName());
-        newUser.setLastName(userDTO.getLastName());
-        if (userDTO.getEmail() != null) {
-            newUser.setEmail(userDTO.getEmail().toLowerCase());
+        newUser.password = passwordHasher.hash(password);
+        newUser.firstName = userDTO.firstName;
+        newUser.lastName = userDTO.lastName;
+        if (userDTO.email != null) {
+            newUser.email = userDTO.email.toLowerCase();
         }
-        newUser.setImageUrl(userDTO.getImageUrl());
-        newUser.setLangKey(userDTO.getLangKey());
+        newUser.imageUrl = userDTO.imageUrl;
+        newUser.langKey = userDTO.langKey;
         // new user is not active
-        newUser.setActivated(false);
+        newUser.activated = false;
         // new user gets registration key
-        newUser.setActivationKey(RandomUtil.generateActivationKey());
+        newUser.activationKey = RandomUtil.generateActivationKey();
         Set<Authority> authorities = new HashSet<>();
-        authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
-        newUser.setAuthorities(authorities);
-        userRepository.save(newUser);
-        this.clearUserCaches(newUser);
+        Authority.<Authority>findByIdOptional(AuthoritiesConstants.USER).ifPresent(authorities::add);
+        newUser.authorities = authorities;
+        User.persist(newUser);
         log.debug("Created Information for User: {}", newUser);
         return newUser;
     }
 
     private boolean removeNonActivatedUser(User existingUser) {
-        if (existingUser.isActivated()) {
+        if (existingUser.activated) {
             return false;
         }
-        userRepository.delete(existingUser);
-        userRepository.flush();
-        this.clearUserCaches(existingUser);
+        User.delete("id", existingUser.id);
         return true;
     }
 
-    public User createUser(AdminUserDTO userDTO) {
+    public User createUser(UserDTO userDTO) {
         User user = new User();
-        user.setLogin(userDTO.getLogin().toLowerCase());
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        if (userDTO.getEmail() != null) {
-            user.setEmail(userDTO.getEmail().toLowerCase());
+        user.login = userDTO.login.toLowerCase();
+        user.firstName = userDTO.firstName;
+        user.lastName = userDTO.lastName;
+        if (userDTO.email != null) {
+            user.email = userDTO.email.toLowerCase();
         }
-        user.setImageUrl(userDTO.getImageUrl());
-        if (userDTO.getLangKey() == null) {
-            user.setLangKey(Constants.DEFAULT_LANGUAGE); // default language
+        user.imageUrl = userDTO.imageUrl;
+        if (userDTO.langKey == null) {
+            user.langKey = Constants.DEFAULT_LANGUAGE; // default language
         } else {
-            user.setLangKey(userDTO.getLangKey());
+            user.langKey = userDTO.langKey;
         }
-        String encryptedPassword = passwordEncoder.encode(RandomUtil.generatePassword());
-        user.setPassword(encryptedPassword);
-        user.setResetKey(RandomUtil.generateResetKey());
-        user.setResetDate(Instant.now());
-        user.setActivated(true);
-        if (userDTO.getAuthorities() != null) {
-            Set<Authority> authorities = userDTO
-                .getAuthorities()
+        user.password = passwordHasher.hash(RandomUtil.generatePassword());
+        user.resetKey = RandomUtil.generateResetKey();
+        user.resetDate = Instant.now();
+        user.activated = true;
+        if (userDTO.authorities != null) {
+            user.authorities = userDTO.authorities
                 .stream()
-                .map(authorityRepository::findById)
+                .map(authority -> Authority.<Authority>findByIdOptional(authority))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
-            user.setAuthorities(authorities);
         }
-        userRepository.save(user);
-        this.clearUserCaches(user);
+        User.persist(user);
         log.debug("Created Information for User: {}", user);
         return user;
+    }
+
+    public void deleteUser(String login) {
+        User.findOneByLogin(login).ifPresent(user -> {
+            User.delete("id", user.id);
+            log.debug("Deleted User: {}", user);
+        });
     }
 
     /**
@@ -186,142 +165,64 @@ public class UserService {
      * @param userDTO user to update.
      * @return updated user.
      */
-    public Optional<AdminUserDTO> updateUser(AdminUserDTO userDTO) {
-        return Optional
-            .of(userRepository.findById(userDTO.getId()))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
+    public Optional<UserDTO> updateUser(UserDTO userDTO) {
+        return User.<User>findByIdOptional(userDTO.id)
             .map(user -> {
-                this.clearUserCaches(user);
-                user.setLogin(userDTO.getLogin().toLowerCase());
-                user.setFirstName(userDTO.getFirstName());
-                user.setLastName(userDTO.getLastName());
-                if (userDTO.getEmail() != null) {
-                    user.setEmail(userDTO.getEmail().toLowerCase());
+                user.login = userDTO.login.toLowerCase();
+                user.firstName = userDTO.firstName;
+                user.lastName = userDTO.lastName;
+                if (userDTO.email != null) {
+                    user.email = userDTO.email.toLowerCase();
                 }
-                user.setImageUrl(userDTO.getImageUrl());
-                user.setActivated(userDTO.isActivated());
-                user.setLangKey(userDTO.getLangKey());
-                Set<Authority> managedAuthorities = user.getAuthorities();
+                user.imageUrl = userDTO.imageUrl;
+                user.activated = userDTO.activated;
+                user.langKey = userDTO.langKey;
+                Set<Authority> managedAuthorities = user.authorities;
                 managedAuthorities.clear();
-                userDTO
-                    .getAuthorities()
+                userDTO.authorities
                     .stream()
-                    .map(authorityRepository::findById)
+                    .map(authority -> Authority.<Authority>findByIdOptional(authority))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .forEach(managedAuthorities::add);
-                userRepository.save(user);
-                this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
                 return user;
             })
-            .map(AdminUserDTO::new);
-    }
-
-    public void deleteUser(String login) {
-        userRepository
-            .findOneByLogin(login)
-            .ifPresent(user -> {
-                userRepository.delete(user);
-                this.clearUserCaches(user);
-                log.debug("Deleted User: {}", user);
-            });
+            .map(UserDTO::new);
     }
 
     /**
      * Update basic information (first name, last name, email, language) for the current user.
      *
+     * @param login     the login to find the user to update.
      * @param firstName first name of user.
      * @param lastName  last name of user.
      * @param email     email id of user.
      * @param langKey   language key.
      * @param imageUrl  image URL of user.
      */
-    public void updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
-        SecurityUtils
-            .getCurrentUserLogin()
-            .flatMap(userRepository::findOneByLogin)
-            .ifPresent(user -> {
-                user.setFirstName(firstName);
-                user.setLastName(lastName);
-                if (email != null) {
-                    user.setEmail(email.toLowerCase());
-                }
-                user.setLangKey(langKey);
-                user.setImageUrl(imageUrl);
-                userRepository.save(user);
-                this.clearUserCaches(user);
-                log.debug("Changed Information for User: {}", user);
-            });
+    public void updateUser(String login, String firstName, String lastName, String email, String langKey, String imageUrl) {
+        User.findOneByLogin(login).ifPresent(user -> {
+            user.firstName = firstName;
+            user.lastName = lastName;
+            if (email != null) {
+                user.email = email.toLowerCase();
+            }
+            user.langKey = langKey;
+            user.imageUrl = imageUrl;
+            log.debug("Changed Information for User: {}", user);
+        });
     }
 
-    @Transactional
-    public void changePassword(String currentClearTextPassword, String newPassword) {
-        SecurityUtils
-            .getCurrentUserLogin()
-            .flatMap(userRepository::findOneByLogin)
-            .ifPresent(user -> {
-                String currentEncryptedPassword = user.getPassword();
-                if (!passwordEncoder.matches(currentClearTextPassword, currentEncryptedPassword)) {
-                    throw new InvalidPasswordException();
-                }
-                String encryptedPassword = passwordEncoder.encode(newPassword);
-                user.setPassword(encryptedPassword);
-                this.clearUserCaches(user);
-                log.debug("Changed password for User: {}", user);
-            });
-    }
-
-    @Transactional(readOnly = true)
-    public Page<AdminUserDTO> getAllManagedUsers(Pageable pageable) {
-        return userRepository.findAll(pageable).map(AdminUserDTO::new);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<UserDTO> getAllPublicUsers(Pageable pageable) {
-        return userRepository.findAllByIdNotNullAndActivatedIsTrue(pageable).map(UserDTO::new);
-    }
-
-    @Transactional(readOnly = true)
     public Optional<User> getUserWithAuthoritiesByLogin(String login) {
-        return userRepository.findOneWithAuthoritiesByLogin(login);
+        return User.findOneWithAuthoritiesByLogin(login);
     }
 
-    @Transactional(readOnly = true)
-    public Optional<User> getUserWithAuthorities() {
-        return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneWithAuthoritiesByLogin);
+    public List<UserDTO> getAllManagedUsers() {
+        return User.findAllByLoginNot(Page.ofSize(20), Constants.ANONYMOUS_USER).stream().map(UserDTO::new).collect(Collectors.toList());
     }
 
-    /**
-     * Not activated users should be automatically deleted after 3 days.
-     * <p>
-     * This is scheduled to get fired everyday, at 01:00 (am).
-     */
-    @Scheduled(cron = "0 0 1 * * ?")
-    public void removeNotActivatedUsers() {
-        userRepository
-            .findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(Instant.now().minus(3, ChronoUnit.DAYS))
-            .forEach(user -> {
-                log.debug("Deleting not activated user {}", user.getLogin());
-                userRepository.delete(user);
-                this.clearUserCaches(user);
-            });
-    }
-
-    /**
-     * Gets a list of all the authorities.
-     * @return a list of all the authorities.
-     */
-    @Transactional(readOnly = true)
     public List<String> getAuthorities() {
-        return authorityRepository.findAll().stream().map(Authority::getName).toList();
-    }
-
-    private void clearUserCaches(User user) {
-        Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)).evict(user.getLogin());
-        if (user.getEmail() != null) {
-            Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evict(user.getEmail());
-        }
+        return Authority.<Authority>streamAll().map(authority -> authority.name).collect(Collectors.toList());
     }
 }

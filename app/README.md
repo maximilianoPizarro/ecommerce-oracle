@@ -1,6 +1,8 @@
-# Ecommerce Oracle 12c 
+# ecommerce
 
-This application was generated using JHipster 8.1.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v8.1.0](https://www.jhipster.tech/documentation-archive/v8.1.0).
+This application was generated using JHipster 8.5.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v8.5.0](https://www.jhipster.tech/documentation-archive/v8.5.0).
+
+This application was generated using JHipster 8.5.0 and JHipster Quarkus , you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v8.5.0](https://www.jhipster.tech/documentation-archive/v8.5.0).
 
 ## Project Structure
 
@@ -8,7 +10,7 @@ Node is required for generation and recommended for development. `package.json` 
 
 In the project root, JHipster generates configuration files for tools like git, prettier, eslint, husky, and others that are well known and you can find references in the web.
 
-`/src/*` structure follows default Java structure.
+`/src/*` structure follows default Quarkus structure.
 
 - `.yo-rc.json` - Yeoman configuration file
   JHipster configuration is stored in this file at `generator-jhipster` key. You may find `generator-jhipster-*` for specific blueprints configuration.
@@ -24,7 +26,7 @@ In the project root, JHipster generates configuration files for tools like git, 
 
 Before you can build this project, you must install and configure the following dependencies on your machine:
 
-1. [Node.js][]: We use Node to run a development web server and build the project.
+1. [Node.js](https://nodejs.org/): We use Node to run a development web server and build the project.
    Depending on your system, you can install Node either from source or as a pre-packaged bundle.
 
 After installing Node, you should be able to run the following command to install development tools.
@@ -34,7 +36,7 @@ You will only need to run this command when dependencies change in [package.json
 npm install
 ```
 
-We use npm scripts and [Webpack][] as our build system.
+We use npm scripts and [Angular CLI][] with [Webpack][] as our build system.
 
 Run the following commands in two separate terminals to create a blissful development experience where your browser
 auto-refreshes when files change on your hard drive.
@@ -54,19 +56,11 @@ The `npm run` command will list all of the scripts available to run for this pro
 
 JHipster ships with PWA (Progressive Web App) support, and it's turned off by default. One of the main components of a PWA is a service worker.
 
-The service worker initialization code is commented out by default. To enable it, uncomment the following code in `src/main/webapp/index.html`:
+The service worker initialization code is disabled by default. To enable it, uncomment the following code in `src/main/webapp/app/app.config.ts`:
 
-```html
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js').then(function () {
-      console.log('Service Worker Registered');
-    });
-  }
-</script>
+```typescript
+ServiceWorkerModule.register('ngsw-worker.js', { enabled: false }),
 ```
-
-Note: [Workbox](https://developers.google.com/web/tools/workbox/) powers JHipster's service worker. It dynamically generates the `service-worker.js` file.
 
 ### Managing dependencies
 
@@ -83,38 +77,81 @@ npm install --save-dev --save-exact @types/leaflet
 ```
 
 Then you would import the JS and CSS files specified in library's installation instructions so that [Webpack][] knows about them:
+Edit [src/main/webapp/app/app.config.ts](src/main/webapp/app/app.config.ts) file:
+
+```
+import 'leaflet/dist/leaflet.js';
+```
+
+Edit [src/main/webapp/content/scss/vendor.scss](src/main/webapp/content/scss/vendor.scss) file:
+
+```
+@import 'leaflet/dist/leaflet.css';
+```
+
 Note: There are still a few other things remaining to do for Leaflet that we won't detail here.
 
 For further instructions on how to develop with JHipster, have a look at [Using JHipster in development][].
 
+### Using Angular CLI
+
+You can also use [Angular CLI][] to generate some custom client code.
+
+For example, the following command:
+
+```
+ng generate component my-component
+```
+
+will generate few files:
+
+```
+create src/main/webapp/app/my-component/my-component.component.html
+create src/main/webapp/app/my-component/my-component.component.ts
+update src/main/webapp/app/app.config.ts
+```
+
 ## Building for production
 
-### Packaging as jar
+### Packaging as thin jar
 
 To build the final jar and optimize the ecommerce application for production, run:
 
 ```
-./mvnw -Pprod clean verify
+./mvnw -Pprod clean package
 ```
 
 This will concatenate and minify the client CSS and JavaScript files. It will also modify `index.html` so it references these new files.
 To ensure everything worked, run:
 
 ```
-java -jar target/*.jar
+    java -jar target/quarkus-app/*.jar
 ```
 
 Then navigate to [http://localhost:8080](http://localhost:8080) in your browser.
 
 Refer to [Using JHipster in production][] for more details.
 
-### Packaging as war
+### Packaging as native executable
 
-To package your application as a war in order to deploy it to an application server, run:
+_Targeting your Operating System_
+In order to build a native image locally, your need to have [GraalVM](https://www.graalvm.org/) installed and `GRAALVM_HOME` defined.
+You can use the `native` profile as follow to build native executable.
 
 ```
-./mvnw -Pprod,war clean verify
+./mvnw package -Pnative
 ```
+
+Keep in mind that the generated native executable is dependent on your Operating System.
+
+_Targeting a container environment_
+If you plan to run your application in a container, run:
+
+```
+./mvnw package -Dnative -Dquarkus.native.container-build=true
+```
+
+It will use a Docker container with GraalVM installed and produce an 64 bit Linux executable.
 
 ### JHipster Control Center
 
@@ -126,7 +163,7 @@ docker compose -f src/main/docker/jhipster-control-center.yml up
 
 ## Testing
 
-### Spring Boot tests
+### Quarkus tests
 
 To launch your application's tests, run:
 
@@ -221,17 +258,19 @@ For more information refer to [Using Docker and Docker-Compose][], this page als
 To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
 
 [JHipster Homepage and latest documentation]: https://www.jhipster.tech
-[JHipster 8.1.0 archive]: https://www.jhipster.tech/documentation-archive/v8.1.0
-[Using JHipster in development]: https://www.jhipster.tech/documentation-archive/v8.1.0/development/
-[Using Docker and Docker-Compose]: https://www.jhipster.tech/documentation-archive/v8.1.0/docker-compose
-[Using JHipster in production]: https://www.jhipster.tech/documentation-archive/v8.1.0/production/
-[Running tests page]: https://www.jhipster.tech/documentation-archive/v8.1.0/running-tests/
-[Code quality page]: https://www.jhipster.tech/documentation-archive/v8.1.0/code-quality/
-[Setting up Continuous Integration]: https://www.jhipster.tech/documentation-archive/v8.1.0/setting-up-ci/
+[JHipster 8.5.0 archive]: https://www.jhipster.tech/documentation-archive/v8.5.0
+[Using JHipster in development]: https://www.jhipster.tech/documentation-archive/v8.5.0/development/
+[Using Docker and Docker-Compose]: https://www.jhipster.tech/documentation-archive/v8.5.0/docker-compose
+[Using JHipster in production]: https://www.jhipster.tech/documentation-archive/v8.5.0/production/
+[Running tests page]: https://www.jhipster.tech/documentation-archive/v8.5.0/running-tests/
+[Code quality page]: https://www.jhipster.tech/documentation-archive/v8.5.0/code-quality/
+[Setting up Continuous Integration]: https://www.jhipster.tech/documentation-archive/v8.5.0/setting-up-ci/
 [Node.js]: https://nodejs.org/
 [NPM]: https://www.npmjs.com/
+[Quarkus Blueprint for JHipster]: https://github.com/jhipster/generator-jhipster-quarkus
 [Webpack]: https://webpack.github.io/
 [BrowserSync]: https://www.browsersync.io/
 [Jest]: https://facebook.github.io/jest/
 [Leaflet]: https://leafletjs.com/
 [DefinitelyTyped]: https://definitelytyped.org/
+[Angular CLI]: https://cli.angular.io/
