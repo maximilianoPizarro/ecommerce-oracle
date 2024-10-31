@@ -17,13 +17,6 @@ metadata:
     - Spring
   language: Java
   projectType: springboot
-projects:
-  - name: ecommerce-oracle
-    git:
-      remotes:
-        origin: 'https://github.com/maximilianoPizarro/ecommerce-oracle'
-      checkoutFrom:
-        revision: main  
 components:
   - name: tools
     container:  
@@ -74,6 +67,12 @@ commands:
       component: tools
       workingDir: ${PROJECT_SOURCE}
       commandLine: 'helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.2'
+  - id: helm-package
+    exec:
+      label: 'Helm package ecommerce-oracle'
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: 'helm repo add oracle-helm-charts https://maximilianopizarro.github.io/oracle-helm-charts/ && helm dependency build && helm package -u . -d charts && helm repo index .'      
   - id: helm-uninstall
     exec:
       label: 'Helm uninstall ecommerce-oracle'

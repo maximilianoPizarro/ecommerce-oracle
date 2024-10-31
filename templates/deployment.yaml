@@ -5,6 +5,8 @@ metadata:
   labels:
     {{- include "ecommerce-oracle.labels" . | nindent 4 }}
     app.openshift.io/runtime: java
+    app.openshift.io/vcs-ref: 'main'
+    app.openshift.io/vcs-uri: 'https://github.com/maximilianoPizarro/ecommerce-oracle'    
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}

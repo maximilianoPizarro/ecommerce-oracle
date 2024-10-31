@@ -8,15 +8,16 @@
 <a href="https://artifacthub.io/packages/search?repo=ecommerce-oracle"><img src="https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/ecommerce-oracle" alt="Artifact Hub" /></a>
 </p>
 
-[![Open](https://img.shields.io/static/v1?label=Open%20in&message=Developer%20Sandbox&logo=eclipseche&color=FDB940&labelColor=525C86)](https://workspaces.openshift.com/#https://github.com/maximilianoPizarro/ecommerce-oracle/tree/main?storageType=ephemeral)
-
-
 <p align="left">
   <img src="https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/app/ecommerce-oracle-topology.PNG?raw=true" width="900" title="Run On Openshift">
   <img src="https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/app/ecommerce-oracle-home.PNG?raw=true" width="900" title="Run On Openshift">  
 </p>
 
 # Installation
+
+## Open in OpenShift Dev Spaces
+
+[![Open](https://img.shields.io/static/v1?label=Open%20in&message=Developer%20Sandbox&logo=eclipseche&color=FDB940&labelColor=525C86)](https://workspaces.openshift.com/#https://github.com/maximilianoPizarro/ecommerce-oracle/tree/main?storageType=ephemeral)
 
 ## GitHub repository
 
