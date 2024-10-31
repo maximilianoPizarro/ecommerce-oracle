@@ -303,7 +303,7 @@ metadata:
 spec:
   to:
     kind: Service
-    name: ci-github
+    name: el-ci-github
     weight: 100
   port:
     targetPort: http-listener
