@@ -90,4 +90,4 @@ commands:
       commandLine: 'chmod 777 ./mvnw && ./mvnw'
       group:
         kind: run
-        isDefault: falses            
+        isDefault: false            
