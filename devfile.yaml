@@ -16,11 +16,13 @@ metadata:
     - Angular
     - Spring
   language: Java
-  projectType: springboot       
+  projectType: springboot
+projects:
+  - name: jhipster-online  
 components:
   - name: tools
     container:  
-      image: 'quay.io/maximilianopizarro/jhipster-devspace'
+      image: 'quay.io/maximilianopizarro/jhipster-devspace@sha256:c27aefcf6ce158479bafae63758c1f0993c430a6ee15f76cf369fc889e54eae5'
       mountSources: true
       cpuLimit: '4'
       cpuRequest: '1'
