@@ -42,7 +42,7 @@ components:
           path: /home/user/.npm
       endpoints:
         - exposure: public
-          name: ecommerce-oracle
+          name: ecommerce
           protocol: https
           targetPort: 8080          
       env:
