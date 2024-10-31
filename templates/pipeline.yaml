@@ -214,10 +214,20 @@ spec:
   workspaces:
     - name: workspace
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: github-secret
+  labels:
+    {{- include "ecommerce-oracle.labels" . | nindent 4 }}  
+type: Opaque
+stringData:
+  secretToken: MTIzNDU2Nw==
+---
 apiVersion: triggers.tekton.dev/v1beta1
 kind: EventListener
 metadata:
-  name: {{ include "ecommerce-oracle.fullname" . }}
+  name: ci-github
   labels:
     {{- include "ecommerce-oracle.labels" . | nindent 4 }}
 spec:
@@ -283,4 +293,21 @@ spec:
                             storage: 4Gi
                         storageClassName: gp2
                         volumeMode: Filesystem
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: ci-github
+  labels:
+    {{- include "ecommerce-oracle.labels" . | nindent 4 }}
+spec:
+  to:
+    kind: Service
+    name: ci-github
+    weight: 100
+  port:
+    targetPort: http-listener
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect                              
 
