@@ -38,4 +38,41 @@ components:
       size: 512Mi
   - name: npm
     volume:
-      size: 512Mi            
+      size: 512Mi   
+commands:
+  - id: helm-add-repo
+    exec:
+      label: 'Helm add repo ecommerce-oracle'
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: 'helm repo add ecommerce-oracle https://maximilianopizarro.github.io/ecommerce-oracle/'
+  - id: helm-install-ecommerce-oracle
+    exec:
+      label: 'Helm install ecommerce-oracle'
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: 'helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.2'
+  - id: helm-uninstall-ecommerce-oracle
+    exec:
+      label: 'Helm uninstall ecommerce-oracle'
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: 'helm uninstall ecommerce-oracle'                          
+  - id: npm-install
+    exec:
+      label: 'Install Package of the application'
+      component: tools
+      workingDir: ${PROJECT_SOURCE}/app
+      commandLine: 'npm install'
+      group:
+        kind: build
+        isDefault: true
+  - id: start-backend
+    exec:
+      label: 'Start Ecommerce Oracle'
+      component: tools
+      workingDir: ${PROJECT_SOURCE}/app
+      commandLine: 'chmod 777 ./mvnw && ./mvnw'
+      group:
+        kind: run
+        isDefault: falses            

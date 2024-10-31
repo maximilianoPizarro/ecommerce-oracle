@@ -3,15 +3,20 @@ entries:
   ecommerce-oracle:
   - apiVersion: v2
     appVersion: 0.0.1-SNAPSHOT
-    created: "2024-03-27T14:53:47.141323433Z"
+    created: "2024-10-31T17:23:50.231242551Z"
     dependencies:
     - name: oracle12c
       repository: https://maximilianopizarro.github.io/oracle-helm-charts/
       version: 0.1.0
     description: A JHipster Oracle Helm chart example for Kubernetes
-    digest: 2fc2cc126650ac7fc915b94dbaf910ad5bec826dc442dc420a7dafab4df73b0d
+    digest: 4e1022587378b3b0ad84061100967612c99d4a27b28a6b8a8d7b0d4230eca3e6
     home: https://maximilianopizarro.github.io/ecommerce-oracle/
-    icon: https://raw.githubusercontent.com/maximilianoPizarro/ecommerce-oracle/main/jhipster-icon.png
+    icon: https://raw.githubusercontent.com/maximilianoPizarro/oracle-helm-charts/main/oracle-icon.png
+    keywords:
+    - oracle
+    - database
+    - spring
+    - openshift
     maintainers:
     - email: maximiliano.pizarro.5@gmail.com
       name: Maximiliano Pizarro
@@ -19,12 +24,12 @@ entries:
     name: ecommerce-oracle
     type: application
     urls:
-    - charts/ecommerce-oracle-0.1.1.tgz
-    version: 0.1.1
+    - charts/ecommerce-oracle-0.1.2.tgz
+    version: 0.1.2
   oracle12c:
   - apiVersion: v1
     appVersion: 12.2.0.1
-    created: "2024-03-27T14:53:47.143190201Z"
+    created: "2024-10-31T17:23:50.23183144Z"
     description: Oracle 12c Database Server
     digest: 80389c915911fe058546cdc2230bfa855aecb91fe6b32ddcd41f6504ab81f91a
     home: https://maximilianopizarro.github.io/oracle-helm-charts/
@@ -41,4 +46,4 @@ entries:
     urls:
     - charts/oracle12c-0.1.0.tgz
     version: 0.1.0
-generated: "2024-03-27T14:53:47.139730302Z"
+generated: "2024-10-31T17:23:50.229723377Z"
