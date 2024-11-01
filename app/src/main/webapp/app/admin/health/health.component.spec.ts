@@ -1,65 +1,92 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { HttpErrorResponse } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { of, throwError } from 'rxjs';
+import { shallowMount } from '@vue/test-utils';
+import axios from 'axios';
+import sinon from 'sinon';
 
-import HealthComponent from './health.component';
-import { HealthService } from './health.service';
-import { Health } from './health.model';
+import Health from './health.vue';
+import HealthService from './health.service';
 
-describe('HealthComponent', () => {
-  let comp: HealthComponent;
-  let fixture: ComponentFixture<HealthComponent>;
-  let service: HealthService;
+type HealthComponentType = InstanceType<typeof Health>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, HealthComponent],
-    })
-      .overrideTemplate(HealthComponent, '')
-      .compileComponents();
-  }));
+const axiosStub = {
+  get: sinon.stub(axios, 'get'),
+};
+
+describe('Health Component', () => {
+  let health: HealthComponentType;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HealthComponent);
-    comp = fixture.componentInstance;
-    service = TestBed.inject(HealthService);
+    axiosStub.get.resolves({});
+    const wrapper = shallowMount(Health, {
+      global: {
+        stubs: {
+          bModal: true,
+          'font-awesome-icon': true,
+          'health-modal': true,
+        },
+        directives: {
+          'b-modal': {},
+        },
+        provide: {
+          healthService: new HealthService(),
+        },
+      },
+    });
+    health = wrapper.vm;
+  });
+
+  describe('baseName and subSystemName', () => {
+    it('should return the basename when it has no sub system', () => {
+      expect(health.baseName('base')).toBe('base');
+    });
+
+    it('should return the basename when it has sub systems', () => {
+      expect(health.baseName('base.subsystem.system')).toBe('base');
+    });
+
+    it('should return the sub system name', () => {
+      expect(health.subSystemName('subsystem')).toBe('');
+    });
+
+    it('should return the subsystem when it has multiple keys', () => {
+      expect(health.subSystemName('subsystem.subsystem.system')).toBe(' - subsystem.system');
+    });
   });
 
   describe('getBadgeClass', () => {
     it('should get badge class', () => {
-      const upBadgeClass = comp.getBadgeClass('UP');
-      const downBadgeClass = comp.getBadgeClass('DOWN');
-      expect(upBadgeClass).toEqual('bg-success');
-      expect(downBadgeClass).toEqual('bg-danger');
+      const upBadgeClass = health.getBadgeClass('UP');
+      const downBadgeClass = health.getBadgeClass('DOWN');
+      expect(upBadgeClass).toEqual('badge-success');
+      expect(downBadgeClass).toEqual('badge-danger');
     });
   });
 
   describe('refresh', () => {
-    it('should call refresh on init', () => {
+    it('should call refresh on init', async () => {
       // GIVEN
-      const health: Health = { status: 'UP', checks: [{ name: 'database check', status: 'UP' }] };
-      jest.spyOn(service, 'checkHealth').mockReturnValue(of(health));
+      axiosStub.get.resolves({});
 
       // WHEN
-      comp.ngOnInit();
+      health.refresh();
+      await health.$nextTick();
 
       // THEN
-      expect(service.checkHealth).toHaveBeenCalled();
-      expect(comp.health).toEqual(health);
+      expect(axiosStub.get.calledWith('management/health')).toBeTruthy();
+      await health.$nextTick();
+      expect(health.updatingHealth).toEqual(false);
     });
-
-    it('should handle a 503 on refreshing health data', () => {
+    it('should handle a 503 on refreshing health data', async () => {
       // GIVEN
-      const health: Health = { status: 'DOWN', checks: [{ name: 'database check', status: 'DOWN' }] };
-      jest.spyOn(service, 'checkHealth').mockReturnValue(throwError(new HttpErrorResponse({ status: 503, error: health })));
+      axiosStub.get.rejects({});
 
       // WHEN
-      comp.refresh();
+      health.refresh();
+      await health.$nextTick();
 
       // THEN
-      expect(service.checkHealth).toHaveBeenCalled();
-      expect(comp.health).toEqual(health);
+      expect(axiosStub.get.calledWith('management/health')).toBeTruthy();
+      await health.$nextTick();
+      expect(health.updatingHealth).toEqual(false);
     });
   });
 });

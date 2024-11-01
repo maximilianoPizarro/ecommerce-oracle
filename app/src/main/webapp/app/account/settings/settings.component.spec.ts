@@ -1,88 +1,111 @@
-jest.mock('app/core/auth/account.service');
+import { shallowMount } from '@vue/test-utils';
+import axios from 'axios';
+import sinon from 'sinon';
+import { createTestingPinia } from '@pinia/testing';
 
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { FormBuilder } from '@angular/forms';
-import { throwError, of } from 'rxjs';
+import Settings from './settings.vue';
+import { useStore } from '@/store';
+import { EMAIL_ALREADY_USED_TYPE } from '@/constants';
 
-import { AccountService } from 'app/core/auth/account.service';
-import { Account } from 'app/core/auth/account.model';
+type SettingsComponentType = InstanceType<typeof Settings>;
 
-import SettingsComponent from './settings.component';
+const pinia = createTestingPinia({ stubActions: false });
 
-describe('SettingsComponent', () => {
-  let comp: SettingsComponent;
-  let fixture: ComponentFixture<SettingsComponent>;
-  let mockAccountService: AccountService;
-  const account: Account = {
+const store = useStore();
+
+const axiosStub = {
+  get: sinon.stub(axios, 'get'),
+  post: sinon.stub(axios, 'post'),
+};
+
+describe('Settings Component', () => {
+  let settings: SettingsComponentType;
+  const account = {
     firstName: 'John',
     lastName: 'Doe',
-    activated: true,
-    email: 'john.doe@mail.com',
-    langKey: 'en',
-    login: 'john',
-    authorities: [],
-    imageUrl: '',
+    email: 'john.doe@jhipster.org',
   };
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SettingsComponent],
-      providers: [FormBuilder, AccountService],
-    })
-      .overrideTemplate(SettingsComponent, '')
-      .compileComponents();
-  }));
-
   beforeEach(() => {
-    fixture = TestBed.createComponent(SettingsComponent);
-    comp = fixture.componentInstance;
-    mockAccountService = TestBed.inject(AccountService);
-    mockAccountService.identity = jest.fn(() => of(account));
-    mockAccountService.getAuthenticationState = jest.fn(() => of(account));
+    axiosStub.get.resolves({});
+    axiosStub.post.reset();
+
+    store.setAuthentication(account);
+    const wrapper = shallowMount(Settings, {
+      global: {
+        plugins: [pinia],
+      },
+    });
+    settings = wrapper.vm;
   });
 
-  it('should send the current identity upon save', () => {
+  it('should send the current identity upon save', async () => {
     // GIVEN
-    mockAccountService.save = jest.fn(() => of({}));
-    const settingsFormValues = {
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@mail.com',
-    };
+    axiosStub.post.resolves({});
 
     // WHEN
-    comp.ngOnInit();
-    comp.save();
+    await settings.save();
+    await settings.$nextTick();
 
     // THEN
-    expect(mockAccountService.identity).toHaveBeenCalled();
-    expect(mockAccountService.save).toHaveBeenCalledWith(account);
-    expect(mockAccountService.authenticate).toHaveBeenCalledWith(account);
-    expect(comp.settingsForm.value).toMatchObject(expect.objectContaining(settingsFormValues));
+    expect(axiosStub.post.calledWith('api/account', account)).toBeTruthy();
   });
 
-  it('should notify of success upon successful save', () => {
+  it('should notify of success upon successful save', async () => {
     // GIVEN
-    mockAccountService.save = jest.fn(() => of({}));
+    axiosStub.post.resolves(account);
 
     // WHEN
-    comp.ngOnInit();
-    comp.save();
+    await settings.save();
+    await settings.$nextTick();
 
     // THEN
-    expect(comp.success()).toBe(true);
+    expect(settings.error).toBeNull();
+    expect(settings.success).toBe('OK');
   });
 
-  it('should notify of error upon failed save', () => {
+  it('should notify of error upon failed save', async () => {
     // GIVEN
-    mockAccountService.save = jest.fn(() => throwError('ERROR'));
+    const error = { response: { status: 417 } };
+    axiosStub.post.rejects(error);
 
     // WHEN
-    comp.ngOnInit();
-    comp.save();
+    await settings.save();
+    await settings.$nextTick();
 
     // THEN
-    expect(comp.success()).toBe(false);
+    expect(settings.error).toEqual('ERROR');
+    expect(settings.errorEmailExists).toBeNull();
+    expect(settings.success).toBeNull();
+  });
+
+  it('should notify of error upon error 400', async () => {
+    // GIVEN
+    const error = { response: { status: 400, data: {} } };
+    axiosStub.post.rejects(error);
+
+    // WHEN
+    await settings.save();
+    await settings.$nextTick();
+
+    // THEN
+    expect(settings.error).toEqual('ERROR');
+    expect(settings.errorEmailExists).toBeNull();
+    expect(settings.success).toBeNull();
+  });
+
+  it('should notify of error upon email already used', async () => {
+    // GIVEN
+    const error = { response: { status: 400, data: { type: EMAIL_ALREADY_USED_TYPE } } };
+    axiosStub.post.rejects(error);
+
+    // WHEN
+    await settings.save();
+    await settings.$nextTick();
+
+    // THEN
+    expect(settings.errorEmailExists).toEqual('ERROR');
+    expect(settings.error).toBeNull();
+    expect(settings.success).toBeNull();
   });
 });

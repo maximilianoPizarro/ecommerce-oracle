@@ -1,82 +1,63 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { of } from 'rxjs';
+import { shallowMount } from '@vue/test-utils';
+import axios from 'axios';
+import sinon from 'sinon';
+import Logs from './logs.vue';
 
-import LogsComponent from './logs.component';
-import { LogsService } from './logs.service';
-import { Log, LoggersResponse } from './log.model';
+type LogsComponentType = InstanceType<typeof Logs>;
 
-describe('LogsComponent', () => {
-  let comp: LogsComponent;
-  let fixture: ComponentFixture<LogsComponent>;
-  let service: LogsService;
+const axiosStub = {
+  get: sinon.stub(axios, 'get'),
+  post: sinon.stub(axios, 'post'),
+};
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, LogsComponent],
-      providers: [LogsService],
-    })
-      .overrideTemplate(LogsComponent, '')
-      .compileComponents();
-  }));
+describe('Logs Component', () => {
+  let logs: LogsComponentType;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LogsComponent);
-    comp = fixture.componentInstance;
-    service = TestBed.inject(LogsService);
+    axiosStub.get.resolves({});
+    const wrapper = shallowMount(Logs);
+    logs = wrapper.vm;
   });
 
   describe('OnInit', () => {
     it('should set all default values correctly', () => {
-      expect(comp.filter()).toBe('');
-      expect(comp.sortState().predicate).toBe('name');
-      expect(comp.sortState().order).toBe('asc');
+      expect(logs.filtered).toBe('');
+      expect(logs.orderProp).toBe('name');
+      expect(logs.reverse).toBe(false);
     });
 
-    it('Should call load all on init', () => {
-      // GIVEN
-      const log = new Log('main', 'WARN');
-      jest.spyOn(service, 'findAll').mockReturnValue(
-        of({
-          loggers: {
-            main: {
-              effectiveLevel: 'WARN',
-            },
-          },
-        } as unknown as LoggersResponse),
-      );
-
+    it('Should call load all on init', async () => {
       // WHEN
-      comp.ngOnInit();
+      logs.init();
+      await logs.$nextTick();
 
       // THEN
-      expect(service.findAll).toHaveBeenCalled();
-      expect(comp.loggers()?.[0]).toEqual(expect.objectContaining(log));
+      expect(axiosStub.get.calledWith('management/loggers')).toBeTruthy();
     });
   });
 
   describe('change log level', () => {
-    it('should change log level correctly', () => {
-      // GIVEN
-      const log = new Log('main', 'ERROR');
-      jest.spyOn(service, 'changeLevel').mockReturnValue(of({}));
-      jest.spyOn(service, 'findAll').mockReturnValue(
-        of({
-          loggers: {
-            main: {
-              effectiveLevel: 'ERROR',
-            },
-          },
-        } as unknown as LoggersResponse),
-      );
+    it('should change log level correctly', async () => {
+      axiosStub.post.resolves({});
 
       // WHEN
-      comp.changeLevel('main', 'ERROR');
+      logs.updateLevel('main', 'ERROR');
+      await logs.$nextTick();
 
       // THEN
-      expect(service.changeLevel).toHaveBeenCalled();
-      expect(service.findAll).toHaveBeenCalled();
-      expect(comp.loggers()?.[0]).toEqual(expect.objectContaining(log));
+      expect(axiosStub.post.calledWith('management/loggers/main', { configuredLevel: 'ERROR' })).toBeTruthy();
+      expect(axiosStub.get.calledWith('management/loggers')).toBeTruthy();
+    });
+  });
+
+  describe('change order', () => {
+    it('should change order and invert reverse', () => {
+      // WHEN
+      logs.changeOrder('dummy-order');
+
+      // THEN
+      expect(logs.orderProp).toEqual('dummy-order');
+      expect(logs.reverse).toBe(true);
     });
   });
 });

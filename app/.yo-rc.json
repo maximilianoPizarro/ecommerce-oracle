@@ -2,26 +2,28 @@
   "generator-jhipster": {
     "applicationType": "monolith",
     "authenticationType": "jwt",
+    "backendType": "Quarkus",
     "baseName": "ecommerce",
     "blueprints": [
       {
         "name": "generator-jhipster-quarkus",
-        "version": "3.2.0"
+        "version": "3.3.0"
       }
     ],
     "buildTool": "maven",
     "cacheProvider": "no",
-    "clientFramework": "angular",
+    "clientFramework": "vue",
     "clientTestFrameworks": [],
     "clientTheme": "none",
-    "creationTimestamp": 1730408453950,
+    "creationTimestamp": 1730472427659,
     "databaseType": "sql",
     "devDatabaseType": "h2Memory",
-    "devServerPort": 4200,
+    "devServerPort": 9060,
     "enableHibernateCache": false,
-    "enableTranslation": false,
+    "enableTranslation": true,
     "entities": [],
-    "jhipsterVersion": "8.5.0",
+    "jhipsterVersion": "8.7.3",
+    "languages": ["en"],
     "microfrontend": null,
     "microfrontends": [],
     "monorepository": true,
