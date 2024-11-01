@@ -14,7 +14,7 @@
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <skipITs>true</skipITs>
 
-        <maven.version>3.9.4</maven.version>
+        <maven.version>3.8.5</maven.version>
         <java.version>17</java.version>
         <node.version>v22.11.0</node.version>
         <npm.version>10.9.0</npm.version>
