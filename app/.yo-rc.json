@@ -6,8 +6,9 @@
     "baseName": "ecommerce",
     "buildTool": "maven",
     "clientFramework": "vue",
-    "clientTheme": "solar",
+    "clientTheme": "cyborg",
     "clientThemeVariant": "dark",
+    "creationTimestamp": 1730912738915,
     "databaseType": "sql",
     "devDatabaseType": "h2Memory",
     "devServerPort": 9060,
@@ -17,9 +18,11 @@
     "jwtSecretKey": "MjkzZjQwMTNkNTE4YjA0ZWE4MDY3YTIwZTJlZWM1N2RiNjkxMTQ2YTdlMTg0NDA1ZmYxZjllM2E5ODQ4NWMwMmQzZmRkNDBmYzYzODU1MDg1ODUyM2JmZGY1ZjVkZWRkMGMxNjhjZWQ3OTc0YzE2NDBkYmY2NjA1YzhhZDhiMjQ=",
     "languages": ["es", "en", "nl"],
     "lastLiquibaseTimestamp": 1710424359000,
+    "monorepository": true,
     "nativeLanguage": "es",
     "packageFolder": "com/ecommerce/app",
     "packageName": "com.ecommerce.app",
-    "prodDatabaseType": "oracle"
+    "prodDatabaseType": "oracle",
+    "skipCommitHook": true
   }
 }

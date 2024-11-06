@@ -10,7 +10,6 @@
     <name>Ecommerce</name>
     <description>Description for Ecommerce</description>
 
-
     <properties>
         <!--
             Build properties
@@ -49,7 +48,7 @@
         <liquibase-plugin.password/>
         <liquibase-plugin.url/>
         <liquibase-plugin.username/>
-        <liquibase.version>4.26.0</liquibase.version>
+        <liquibase.version>4.24.0</liquibase.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
         <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
@@ -1030,8 +1029,8 @@
                     </plugin>
                 </plugins>
             </build>
-            <dependencies>     
-                		<!-- Oracle -->
+            <dependencies>
+            <!-- Oracle -->
                <dependency>
                     <groupId>com.oracle.database.jdbc</groupId>
                     <artifactId>ojdbc8</artifactId>
@@ -1041,8 +1040,7 @@
                     <groupId>com.oracle.database.jdbc</groupId>
                     <artifactId>ucp</artifactId>
                     <version>12.2.0.1</version>
-                </dependency>                
-
+                </dependency>  
             </dependencies>
         </profile>
         <profile>
