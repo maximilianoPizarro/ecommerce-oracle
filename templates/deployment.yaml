@@ -4,7 +4,9 @@ metadata:
   name: {{ include "ecommerce-oracle.fullname" . }}
   labels:
     {{- include "ecommerce-oracle.labels" . | nindent 4 }}
-    app.openshift.io/runtime: java
+    app.openshift.io/runtime: spring-boot
+  annotations:
+    app.openshift.io/connects-to: '[{"apiVersion":"apps/v1","kind":"Deployment","name":"oracle12c"}]'    
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}

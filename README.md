@@ -47,7 +47,7 @@ helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version "VERSI
 
 ```bash
 Example:
-helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.2
+helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.3
 ```
 
 
