@@ -1,4 +1,4 @@
-# Deploy JHipster Oracle Helm Charts example on Red Hat OpenShift
+# Deploy E-commerce Oracle Helm Charts example on Red Hat OpenShift
 <p align="left">
 <img src="https://img.shields.io/badge/redhat-CC0000?style=for-the-badge&logo=redhat&logoColor=white" alt="Redhat">
 <img src="https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white" alt="kubernetes">
@@ -253,8 +253,9 @@ REVISION: 1
 
 6. Register Ecommerce Oracle Componet.
 
+```bash
 https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/catalog-info.yaml
-
+```
 
 # Install From Helm Charts Command
 
