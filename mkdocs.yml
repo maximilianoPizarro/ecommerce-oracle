@@ -1,0 +1,4 @@
+site_name: E-Commerce
+nav:
+  - Home: README.md
+theme: readthedocs
