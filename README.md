@@ -50,14 +50,14 @@ oc get routes ecommerce-oracle
 
 ```bash
 Output
-ecommerce-oracle (main) $ oc get routes ecommerce-oracle
+ecommerce-oracle (main) $ oc get routes ecommerce-oracle.
 NAME               HOST/PORT                                                                            PATH   SERVICES           PORT   TERMINATION     WILDCARD
 ecommerce-oracle   ecommerce-oracle-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com          ecommerce-oracle   http   edge/Redirect   None
 ```
 
 ## Configure Triggers Web Hook
 
-Access to the WebHook Settings and configure 
+Access to the WebHook Settings and configure ci-github route.
 
 <p align="left">
 <img src="https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/app/webhook-github.PNG?raw=true" width="900" title="Run On Openshift">  
@@ -74,16 +74,177 @@ NAME        HOST/PORT                                                          P
 ci-github   ci-github-mpizarro-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com          el-ci-github   http-listener   edge/Redirect   None
 ```
 
-## GitHub repository
+# GitHub repository
 
-- [GitHub Page](https://maximilianopizarro.github.io/ecommerce-oracle/)
+- [Home Page](https://maximilianopizarro.github.io/ecommerce-oracle/)
 - [GitHub Repo](https://github.com/maximilianoPizarro/ecommerce-oracle)
+
+
+# Install Developer Hub with Helm Cli (Optional Steps)
+
+## Add OpenShift Helm Charts repo
+Open OpenShift Web Terminal and run.
+```bash
+helm repo add openshift-helm-charts https://charts.openshift.io/
+```
+
+```bash
+Output:
+bash-5.1 ~ $ helm repo add openshift-helm-charts https://charts.openshift.io/
+WARNING: Kubernetes configuration file is group-readable. This is insecure. Location: /home/user/.kube/config
+WARNING: Kubernetes configuration file is world-readable. This is insecure. Location: /home/user/.kube/config
+"openshift-helm-charts" has been added to your repositories
+```
+
+## Deploy Developer Hub using Helm Charts Values
+
+## Complete Parameters from files.
+0. Update the developer-hub/app-config-rhdh.yaml file.
+
+### Token GitHub 
+[https://github.com/settings/tokens/new](https://github.com/settings/tokens/new)
+```bash
+-->developer-hub/app-config-rhdh.yaml
+    ...
+    integrati0ons:
+      github:
+        - host: github.com
+          token: <<TOKEN-GITHUB-REPO>>
+    ...
+```
+
+### OAuth GitHub Client
+[https://github.com/settings/developers](https://github.com/settings/developers)
+
+```bash
+-->developer-hub/app-config-rhdh.yaml
+        ...
+        github:
+          development:
+            clientId: <<CLIENT-ID>>
+            clientSecret: <<CLIENT-SECRET>>
+        ...
+```
+
+### Base URL
+
+```bash
+-->developer-hub/app-config-rhdh.yaml
+      ...
+      baseUrl: <<URL>> https://redhat-developer-hub- <NAMESPACE> .apps.sandbox-m2.ll9k.p1.openshiftapps.com/
+      ...
+```
+```bash
+Example:
+      ...
+      baseUrl: <<URL>> https://redhat-developer-hub-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com/
+      ...
+```
+
+### Namespace Role Bindiging
+1. Update the backstage-role-binding-service-account.yaml file.
+   
+```bash
+-->developer-hub/backstage-role-binding-service-account.yaml
+       ...
+        kind: RoleBinding
+        apiVersion: rbac.authorization.k8s.io/v1
+        metadata:
+          name: 'backstage-read-only'
+          namespace: <<NAMESPACE>>
+        subjects:
+          - kind: User
+            apiGroup: rbac.authorization.k8s.io
+            name: 'system:serviceaccount: <<NAMESPACE>> :backstage-read-only'
+       ...
+
+```
+```bash
+Example:
+       ...
+        kind: RoleBinding
+        apiVersion: rbac.authorization.k8s.io/v1
+        metadata:
+          name: 'backstage-read-only'
+          namespace: maximilianopizarro5-dev
+        subjects:
+          - kind: User
+            apiGroup: rbac.authorization.k8s.io
+            name: 'system:serviceaccount:maximilianopizarro5-dev:backstage-read-only'
+       ...
+
+```
+
+## Chart Values
+2. Update the values.yaml file.
+   
+### Cluster Router Base
+
+```bash
+-->developer-hub/values.yaml
+      ...
+        global:
+          clusterRouterBase: <<CLUSTER_ROUTER_BASE>>
+      ...
+```
+
+```bash
+Example:
+      ...
+        global:
+          clusterRouterBase: apps.sandbox-m2.ll9k.p1.openshiftapps.com
+      ...
+```
+### K8S_CLUSTER_URL
+
+```bash
+-->developer-hub/values.yaml
+      ...
+      - name: K8S_CLUSTER_URL
+        value: <<K8S_CLUSTER_URL>>
+      ...
+```
+
+```bash
+Example:
+      ...
+      - name: K8S_CLUSTER_URL
+        value: 'https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443'
+      ...
+```
+
+Open OpenShift Web Terminal and run.
+```bash
+helm install redhat-developer-hub openshift-helm-charts/redhat-developer-hub -f developer-hub/values.yaml --version 1.2.2
+```
+
+```bash
+Output:
+bash-5.1 ~ $ helm install redhat-developer-hub openshift-helm-charts/redhat-developer-hub -f developer-hub/values.yaml --version 1.2.2
+WARNING: Kubernetes configuration file is group-readable. This is insecure. Location: /home/user/.kube/config
+WARNING: Kubernetes configuration file is world-readable. This is insecure. Location: /home/user/.kube/config
+NAME: redhat-developer-hub
+LAST DEPLOYED: Thu Aug 22 22:44:39 2024
+NAMESPACE: maximilianopizarro5-dev
+STATUS: deployed
+REVISION: 1
+```
+5. Access to Developer Portal with GitHub Access.
+
+<p align="left">
+  <img src="https://github.com/maximilianoPizarro/developer-hub-on-developer-sandbox/blob/main/screenshot/developer-hub-github-access.PNG?raw=true" width="900" title="Run On Openshift">
+</p>
+
+6. Register Ecommerce Oracle Componet.
+
+https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/catalog-info.yaml
+
+7. Push a commit and see de Pipeline Run.
 
 
 # Install From Helm Charts Command
 
 ## Charts Values Parameters
-
 
 ## Add repository
 
@@ -102,13 +263,11 @@ Example:
 helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.3
 ```
 
-
 ## Uninstall Chart
 
 ```bash
 helm uninstall ecommerce-oracle
 ```
-
 
 ## Package Steps Local Build
 
@@ -118,4 +277,3 @@ helm dependency build
 helm package -u . -d charts
 helm repo index .
 ```
-

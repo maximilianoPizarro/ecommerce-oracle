@@ -13,7 +13,7 @@ When your OpenShift Dev Spaces is running, click in Workspace, Select "Run Tasks
 
 ## Open OpenShift Console
 
-- [Developer Sandbox](https://developers.redhat.com/developer-sandbox)
+- [GitHub Page](https://developers.redhat.com/developer-sandbox)
 
 See the OpenShift Topology.
 Access to the home page to the Web App.
@@ -80,7 +80,6 @@ helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.3
 ```bash
 helm uninstall ecommerce-oracle
 ```
-
 
 ## Package Steps Local Build
 
