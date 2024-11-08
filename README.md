@@ -74,13 +74,29 @@ NAME        HOST/PORT                                                          P
 ci-github   ci-github-mpizarro-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com          el-ci-github   http-listener   edge/Redirect   None
 ```
 
-# GitHub repository
-
-- [Home Page](https://maximilianopizarro.github.io/ecommerce-oracle/)
-- [GitHub Repo](https://github.com/maximilianoPizarro/ecommerce-oracle)
 
 
 # Install Developer Hub with Helm Cli (Optional Steps)
+
+See the pipelines.
+<p align="left">
+<img src="https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/app/developer-hub-ecommerce.PNG?raw=true" width="900" title="Run On Openshift">  
+</p>
+
+Review the documentation.
+<p align="left">
+<img src="https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/app/developer-hub-ecommerce-documentation.PNG?raw=true" width="900" title="Run On Openshift">  
+</p>
+
+See the App Topology.
+<p align="left">
+<img src="https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/app/developer-hub-ecommerce-kubernetes.PNG?raw=true" width="900" title="Run On Openshift">  
+</p>
+
+See the App Logs.
+<p align="left">
+<img src="https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/app/developer-hub-ecommerce-kubernetes-logs.PNG?raw=true" width="900" title="Run On Openshift">  
+</p>
 
 ## Add OpenShift Helm Charts repo
 Open OpenShift Web Terminal and run.
@@ -239,8 +255,6 @@ REVISION: 1
 
 https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/catalog-info.yaml
 
-7. Push a commit and see de Pipeline Run.
-
 
 # Install From Helm Charts Command
 
@@ -277,3 +291,9 @@ helm dependency build
 helm package -u . -d charts
 helm repo index .
 ```
+
+
+# GitHub repository
+
+- [Home Page](https://maximilianopizarro.github.io/ecommerce-oracle/)
+- [GitHub Repo](https://github.com/maximilianoPizarro/ecommerce-oracle)
