@@ -9,7 +9,7 @@ metadata:
     backstage.io/kubernetes-namespace: mpizarro-dev
     backstage.io/kubernetes-id: ecommerce-oracle
     janus-idp.io/tekton : ecommerce-oracle
-    backstage.io/kubernetes-label-selector: 'app=ecommerce-oracle,tekton.dev/pipeline=ecommerce-oracle'
+    backstage.io/kubernetes-label-selector: 'app=ecommerce-oracle'
   links:
     - title: Documentation
       url: https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/README.md 

@@ -86,6 +86,9 @@ metadata:
     {{- include "ecommerce-oracle.labels" . | nindent 4 }}
 spec:
   params:
+    - default: 'https://github.com/maximilianoPizarro/ecommerce-oracle'
+      name: GIT_REPO
+      type: string  
     - default: 'image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/{{ include "ecommerce-oracle.fullname" . }}'
       name: IMAGE_NAME
       type: string
@@ -143,7 +146,7 @@ spec:
     - name: git-clone
       params:
         - name: url
-          value: 'https://github.com/maximilianoPizarro/ecommerce-oracle'
+          value: $(params.GIT_REPO)
         - name: revision
           value: main
         - name: refspec
@@ -264,8 +267,11 @@ spec:
                 generateName: ecommerce-oracle-
                 labels:
                   tekton.dev/pipeline: ecommerce-oracle
+                  app: ecommerce-oracle
               spec:
                 params:
+                  - name: GIT_REPO
+                    value: $(tt.params.gitrepositoryurl)                
                   - name: IMAGE_NAME
                     value: 'image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/ecommerce-oracle'
                   - name: PATH_CONTEXT
