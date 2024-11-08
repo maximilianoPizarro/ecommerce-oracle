@@ -1,4 +1,9 @@
 site_name: E-Commerce
+site_url: https://maximilianopizarro.github.io/ecommerce-oracle/
+site_author: Maximiliano Pizarro
+site_description: "A clean, responsive theme for static documentation websites that are generated with MkDocs"
+repo_url: "https://github.com/chrissimpkins/cinder"
+
 nav:
-  - Home: README.md
+  - Home: index.md
 theme: readthedocs
