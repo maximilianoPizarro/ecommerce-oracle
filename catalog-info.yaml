@@ -17,10 +17,8 @@ metadata:
       title: OpenShift Dev Spaces (VS Code)
       icon: web
   tags:
-    - Java
-    - Spring
-    - Oracle                    
-    - VueJS
+    - java
+    - dev
 spec:
   type: service
   lifecycle: experimental
