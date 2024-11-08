@@ -20,7 +20,7 @@
 
 ## Run tasks
 
-When your OpenShift Dev Spaces is running, click in Workspace, Select "Run Tasks" and select devfile with containts helm charts and run app Steps.
+When your OpenShift Dev Spaces is running, click in Workspace, Select's "Run Tasks" and devfile options with containts Helm charts Web App + Developer Hub and Steps Runnning.
 
 <p align="left">  
   <img src="https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/app/tasks-helm-chart.png?raw=true" width="900" title="Run On Openshift">
@@ -36,7 +36,7 @@ See the OpenShift Topology.
 <img src="https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/app/ecommerce-oracle-topology.PNG?raw=true" width="900" title="Run On Openshift">
 </p>
 
-Access to the home page to the Web App.
+Access to the Home Page to the Web App.
 
 <p align="left">  
 <img src="https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/app/ecommerce-oracle-home.PNG?raw=true" width="900" title="Run On Openshift">  
@@ -74,8 +74,6 @@ NAME        HOST/PORT                                                          P
 ci-github   ci-github-mpizarro-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com          el-ci-github   http-listener   edge/Redirect   None
 ```
 
-
-
 # Install Developer Hub with Helm Cli (Optional Steps)
 
 See the pipelines.
@@ -93,12 +91,13 @@ See the App Topology.
 <img src="https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/app/developer-hub-ecommerce-kubernetes.PNG?raw=true" width="900" title="Run On Openshift">  
 </p>
 
-See the App Logs.
+See the Web App Logs.
 <p align="left">
 <img src="https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/app/developer-hub-ecommerce-kubernetes-logs.PNG?raw=true" width="900" title="Run On Openshift">  
 </p>
 
 ## Add OpenShift Helm Charts repo
+
 Open OpenShift Web Terminal and run.
 ```bash
 helm repo add openshift-helm-charts https://charts.openshift.io/
@@ -293,8 +292,7 @@ helm package -u . -d charts
 helm repo index .
 ```
 
-
-# GitHub repository
+# Links
 
 - [Home Page](https://maximilianopizarro.github.io/ecommerce-oracle/)
 - [GitHub Repo](https://github.com/maximilianoPizarro/ecommerce-oracle)
