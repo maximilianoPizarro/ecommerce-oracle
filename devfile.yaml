@@ -61,12 +61,24 @@ commands:
       component: tools
       workingDir: ${PROJECT_SOURCE}
       commandLine: 'helm repo add ecommerce-oracle https://maximilianopizarro.github.io/ecommerce-oracle/'
+  - id: helm-add-repo-developerhub
+    exec:
+      label: 'Helm add repo Developer Hub'
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: 'helm repo add openshift-helm-charts https://charts.openshift.io/'      
+  - id: helm-install-developerhub
+    exec:
+      label: 'Helm install Developer Hub v1.2.2'
+      component: tools
+      workingDir: ${PROJECT_SOURCE}/developer-hub
+      commandLine: 'helm install redhat-developer-hub openshift-helm-charts/redhat-developer-hub -f values.yaml --version 1.2.2'
   - id: helm-install
     exec:
       label: 'Helm install ecommerce-oracle'
       component: tools
       workingDir: ${PROJECT_SOURCE}
-      commandLine: 'helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.3'
+      commandLine: 'helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.3'      
   - id: helm-package
     exec:
       label: 'Helm package ecommerce-oracle'
@@ -78,7 +90,13 @@ commands:
       label: 'Helm uninstall ecommerce-oracle'
       component: tools
       workingDir: ${PROJECT_SOURCE}
-      commandLine: 'helm uninstall ecommerce-oracle'                          
+      commandLine: 'helm uninstall ecommerce-oracle'
+  - id: helm-uninstall-developerhub
+    exec:
+      label: 'Helm uninstall Developer Hub'
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: 'helm uninstall redhat-developer-hub'      
   - id: npm-install
     exec:
       label: 'Install Package of the application'
