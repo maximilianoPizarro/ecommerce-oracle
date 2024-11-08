@@ -48,6 +48,7 @@ Selector labels
 {{- define "ecommerce-oracle.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "ecommerce-oracle.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+app: ecommerce-oracle
 {{- end }}
 
 {{/*
