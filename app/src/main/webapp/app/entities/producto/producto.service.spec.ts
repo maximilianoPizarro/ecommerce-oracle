@@ -2,8 +2,8 @@
 import axios from 'axios';
 import sinon from 'sinon';
 
-import RegionService from './region.service';
-import { Region } from '@/shared/model/region.model';
+import ProductoService from './producto.service';
+import { Producto } from '@/shared/model/producto.model';
 
 const error = {
   response: {
@@ -23,13 +23,13 @@ const axiosStub = {
 };
 
 describe('Service Tests', () => {
-  describe('Region Service', () => {
-    let service: RegionService;
+  describe('Producto Service', () => {
+    let service: ProductoService;
     let elemDefault;
 
     beforeEach(() => {
-      service = new RegionService();
-      elemDefault = new Region(123, 'AAAAAAA');
+      service = new ProductoService();
+      elemDefault = new Producto(123, 'AAAAAAA', 'AAAAAAA');
     });
 
     describe('Service methods', () => {
@@ -52,7 +52,7 @@ describe('Service Tests', () => {
           });
       });
 
-      it('should create a Region', async () => {
+      it('should create a Producto', async () => {
         const returnedFromService = Object.assign(
           {
             id: 123,
@@ -67,7 +67,7 @@ describe('Service Tests', () => {
         });
       });
 
-      it('should not create a Region', async () => {
+      it('should not create a Producto', async () => {
         axiosStub.post.rejects(error);
 
         return service
@@ -78,10 +78,11 @@ describe('Service Tests', () => {
           });
       });
 
-      it('should update a Region', async () => {
+      it('should update a Producto', async () => {
         const returnedFromService = Object.assign(
           {
-            regionName: 'BBBBBB',
+            nombre: 'BBBBBB',
+            descripcion: 'BBBBBB',
           },
           elemDefault,
         );
@@ -94,7 +95,7 @@ describe('Service Tests', () => {
         });
       });
 
-      it('should not update a Region', async () => {
+      it('should not update a Producto', async () => {
         axiosStub.put.rejects(error);
 
         return service
@@ -105,12 +106,12 @@ describe('Service Tests', () => {
           });
       });
 
-      it('should partial update a Region', async () => {
+      it('should partial update a Producto', async () => {
         const patchObject = Object.assign(
           {
-            regionName: 'BBBBBB',
+            descripcion: 'BBBBBB',
           },
-          new Region(),
+          new Producto(),
         );
         const returnedFromService = Object.assign(patchObject, elemDefault);
 
@@ -122,7 +123,7 @@ describe('Service Tests', () => {
         });
       });
 
-      it('should not partial update a Region', async () => {
+      it('should not partial update a Producto', async () => {
         axiosStub.patch.rejects(error);
 
         return service
@@ -133,10 +134,11 @@ describe('Service Tests', () => {
           });
       });
 
-      it('should return a list of Region', async () => {
+      it('should return a list of Producto', async () => {
         const returnedFromService = Object.assign(
           {
-            regionName: 'BBBBBB',
+            nombre: 'BBBBBB',
+            descripcion: 'BBBBBB',
           },
           elemDefault,
         );
@@ -147,7 +149,7 @@ describe('Service Tests', () => {
         });
       });
 
-      it('should not return a list of Region', async () => {
+      it('should not return a list of Producto', async () => {
         axiosStub.get.rejects(error);
 
         return service
@@ -158,14 +160,14 @@ describe('Service Tests', () => {
           });
       });
 
-      it('should delete a Region', async () => {
+      it('should delete a Producto', async () => {
         axiosStub.delete.resolves({ ok: true });
         return service.delete(123).then(res => {
           expect(res.ok).toBeTruthy();
         });
       });
 
-      it('should not delete a Region', async () => {
+      it('should not delete a Producto', async () => {
         axiosStub.delete.rejects(error);
 
         return service

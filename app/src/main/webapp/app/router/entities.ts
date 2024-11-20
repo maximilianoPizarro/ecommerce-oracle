@@ -11,6 +11,10 @@ const Country = () => import('@/entities/country/country.vue');
 const CountryUpdate = () => import('@/entities/country/country-update.vue');
 const CountryDetails = () => import('@/entities/country/country-details.vue');
 
+const Producto = () => import('@/entities/producto/producto.vue');
+const ProductoUpdate = () => import('@/entities/producto/producto-update.vue');
+const ProductoDetails = () => import('@/entities/producto/producto-details.vue');
+
 // jhipster-needle-add-entity-to-router-import - JHipster will import entities to the router here
 
 export default {
@@ -63,6 +67,30 @@ export default {
       path: 'country/:countryId/view',
       name: 'CountryView',
       component: CountryDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'producto',
+      name: 'Producto',
+      component: Producto,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'producto/new',
+      name: 'ProductoCreate',
+      component: ProductoUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'producto/:productoId/edit',
+      name: 'ProductoEdit',
+      component: ProductoUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'producto/:productoId/view',
+      name: 'ProductoView',
+      component: ProductoDetails,
       meta: { authorities: [Authority.USER] },
     },
     // jhipster-needle-add-entity-to-router - JHipster will add entities to the router here

@@ -244,8 +244,6 @@ class CountryResourceIT {
         Country partialUpdatedCountry = new Country();
         partialUpdatedCountry.setId(country.getId());
 
-        partialUpdatedCountry.countryName(UPDATED_COUNTRY_NAME);
-
         restCountryMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedCountry.getId())
@@ -258,7 +256,7 @@ class CountryResourceIT {
         List<Country> countryList = countryRepository.findAll();
         assertThat(countryList).hasSize(databaseSizeBeforeUpdate);
         Country testCountry = countryList.get(countryList.size() - 1);
-        assertThat(testCountry.getCountryName()).isEqualTo(UPDATED_COUNTRY_NAME);
+        assertThat(testCountry.getCountryName()).isEqualTo(DEFAULT_COUNTRY_NAME);
     }
 
     @Test
