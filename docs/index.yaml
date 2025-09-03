@@ -3,18 +3,18 @@ entries:
   workshop-pipelines:
   - apiVersion: v2
     appVersion: 0.0.1-SNAPSHOT
-    created: "2025-09-03T18:48:31.199323249Z"
+    created: "2025-09-03T19:30:56.686267119Z"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
       repository: https://charts.bitnami.com/bitnami
       version: 15.5.38
-    description: A JHipster Oracle Helm chart example for Kubernetes
-    digest: 75c26ec87f55f3f2a0c68526275303022597914ffb4ce3f7374d4c6dada1f002
+    description: A JHipster Workshop Pipelines Helm chart example for Kubernetes
+    digest: dbaf2f192ca506dcc93a84cca47d63357efdcd2999849df3cff66585d4487104
     home: https://maximilianopizarro.github.io/workshop-pipelines/
     icon: https://raw.githubusercontent.com/maximilianoPizarro/workshop-pipelines/main/logo-rhel.png
     keywords:
-    - oracle
+    - postgresql
     - database
     - spring
     - openshift
@@ -27,4 +27,4 @@ entries:
     urls:
     - workshop-pipelines-0.1.4.tgz
     version: 0.1.4
-generated: "2025-09-03T18:48:31.190205865Z"
+generated: "2025-09-03T19:30:56.676342117Z"

@@ -6,8 +6,8 @@ schemaVersion: 2.2.2
 metadata:
   name: workshop-pipelines
   version: 2.33.0
-  description: Ecommerce Oracle Example Helm Chart on DevSpaces Red Hat OpenShift
-  displayName: Ecommerce Oracle
+  description: WorkShop Pipelines Helm Chart on DevSpaces Red Hat OpenShift
+  displayName: WorkShop 
   icon: https://raw.githubusercontent.com/maximilianoPizarro/workshop-pipelines/main/jhipster-icon.png
   website: https://maximilianopizarro.github.io/workshop-pipelines
   tags:
@@ -55,12 +55,36 @@ components:
     volume:
       size: 512Mi   
 commands:
-  - id: helm-add-repo
+  - id: helm-dependency-build
     exec:
-      label: 'Helm add repo workshop-pipelines'
+      label: '1. Helm repo add'
       component: tools
       workingDir: ${PROJECT_SOURCE}
-      commandLine: 'helm repo add workshop-pipelines https://maximilianopizarro.github.io/workshop-pipelines/'
+      commandLine: 'helm repo add workshop-pipelines https://maximilianopizarro.github.io/workshop-pipelines/'   
+  - id: helm-install
+    exec:
+      label: '3. Helm install workshop-pipelines'
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: 'helm install workshop-pipelines workshop-pipelines/workshop-pipelines --version 0.1.4'     
+  - id: npm-install
+    exec:
+      label: 'a. Install Package of the application'
+      component: tools
+      workingDir: ${PROJECT_SOURCE}/app
+      commandLine: 'npm install'
+      group:
+        kind: build
+        isDefault: true
+  - id: start-backend
+    exec:
+      label: 'b. Start Ecommerce'
+      component: tools
+      workingDir: ${PROJECT_SOURCE}/app
+      commandLine: 'chmod 777 ./mvnw && ./mvnw'
+      group:
+        kind: run
+        isDefault: false            
   - id: helm-add-repo-developerhub
     exec:
       label: 'Helm add repo Developer Hub'
@@ -73,21 +97,15 @@ commands:
       component: tools
       workingDir: ${PROJECT_SOURCE}/developer-hub
       commandLine: 'helm install redhat-developer-hub openshift-helm-charts/redhat-developer-hub -f values.yaml --version 1.7.0'
-  - id: helm-install
-    exec:
-      label: 'Helm install workshop-pipelines'
-      component: tools
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: 'helm install workshop-pipelines workshop-pipelines/workshop-pipelines --version 0.1.4'      
   - id: helm-package
     exec:
       label: 'Helm package workshop-pipelines'
       component: tools
       workingDir: ${PROJECT_SOURCE}
-      commandLine: 'helm dependency build && helm package -u . -d docs && helm repo index docs/'      
+      commandLine: 'helm dependency build && helm package -u . -d docs && helm repo index docs/'
   - id: helm-uninstall
     exec:
-      label: 'Helm uninstall workshop-pipelines'
+      label: '4. Helm uninstall workshop-pipelines'
       component: tools
       workingDir: ${PROJECT_SOURCE}
       commandLine: 'helm uninstall workshop-pipelines'
@@ -96,22 +114,4 @@ commands:
       label: 'Helm uninstall Developer Hub'
       component: tools
       workingDir: ${PROJECT_SOURCE}
-      commandLine: 'helm uninstall redhat-developer-hub'      
-  - id: npm-install
-    exec:
-      label: 'Install Package of the application'
-      component: tools
-      workingDir: ${PROJECT_SOURCE}/app
-      commandLine: 'npm install'
-      group:
-        kind: build
-        isDefault: true
-  - id: start-backend
-    exec:
-      label: 'Start Ecommerce Oracle'
-      component: tools
-      workingDir: ${PROJECT_SOURCE}/app
-      commandLine: 'chmod 777 ./mvnw && ./mvnw'
-      group:
-        kind: run
-        isDefault: false            
+      commandLine: 'helm uninstall redhat-developer-hub'                     

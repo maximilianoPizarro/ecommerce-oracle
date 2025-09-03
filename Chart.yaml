@@ -1,6 +1,6 @@
 apiVersion: v2
 name: workshop-pipelines
-description: A JHipster Oracle Helm chart example for Kubernetes
+description: A JHipster Workshop Pipelines Helm chart example for Kubernetes
 
 # A chart can be either an 'application' or a 'library' chart.
 #

@@ -1,4 +1,4 @@
-# Deploy E-commerce Oracle Helm Charts example on Red Hat OpenShift
+# Deploy E-commerce Helm Charts example on Red Hat OpenShift
 <p align="left">
 <img src="https://img.shields.io/badge/redhat-CC0000?style=for-the-badge&logo=redhat&logoColor=white" alt="Redhat">
 <img src="https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white" alt="kubernetes">
@@ -250,7 +250,7 @@ REVISION: 1
   <img src="https://github.com/maximilianoPizarro/developer-hub-on-developer-sandbox/blob/main/screenshot/developer-hub-github-access.PNG?raw=true" width="900" title="Run On Openshift">
 </p>
 
-6. Register Ecommerce Oracle Componet.
+6. Register WorkShop Pipelines Componet.
 
 ```bash
 https://github.com/maximilianoPizarro/workshop-pipelines/blob/main/catalog-info.yaml
@@ -274,7 +274,7 @@ helm install workshop-pipelines workshop-pipelines/workshop-pipelines --version 
 
 ```bash
 Example:
-helm install workshop-pipelines workshop-pipelines/workshop-pipelines --version 0.1.3
+helm install workshop-pipelines workshop-pipelines/workshop-pipelines --version 0.1.4
 ```
 
 ## Uninstall Chart

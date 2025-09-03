@@ -1,4 +1,4 @@
-# Deploy JHipster Oracle Helm Charts example on Red Hat OpenShift
+# Deploy JHipster Helm Charts example on Red Hat OpenShift
 
 # Installation from OpenShift Dev Spaces
 
@@ -84,7 +84,6 @@ helm uninstall workshop-pipelines
 ## Package Steps Local Build
 
 ```bash
-helm repo add oracle-helm-charts https://maximilianopizarro.github.io/oracle-helm-charts/
 helm dependency build
 helm package -u . -d charts
 helm repo index .

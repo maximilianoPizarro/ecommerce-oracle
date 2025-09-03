@@ -2,7 +2,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: "workshop-pipelines"
-  description: "E-Commerce Oracle for Red Hat Developer Hub"
+  description: "E-Commerce for Red Hat Developer Hub"
   annotations:
     github.com/project-slug: maximilianopizarro/workshop-pipelines
     backstage.io/techdocs-ref: dir:.
