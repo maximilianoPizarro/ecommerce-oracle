@@ -20,7 +20,7 @@ spec:
     - default: 'https://github.com/maximilianoPizarro/workshop-pipelines'
       name: GIT_REPO
       type: string  
-    - default: 'image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/{{ include "workshop-pipelines.fullname" . }}'
+    - default: 'image-registry.openshift-image-registry.svc:5000/{{ .Release.Namespace }}/{{ include "workshop-pipelines.fullname" . }}'
       name: IMAGE_NAME
       type: string
     - default: /app
