@@ -1,0 +1,28 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: {{ include "workshop-pipelines.fullname" . }}
+  labels:
+    {{- include "workshop-pipelines.labels" . | nindent 4 }}
+spec:
+  params:
+    - name: GIT_REPO
+      value: 'https://github.com/maximilianoPizarro/workshop-pipelines'
+    - name: IMAGE_NAME
+      value: 'image-registry.openshift-image-registry.svc:5000/{{ .Release.Namespace }}/workshop-pipelines'
+    - name: PATH_CONTEXT
+      value: /app
+    - name: MAVEN_IMAGE
+      value: 'registry.redhat.io/ubi8/openjdk-17@sha256:af305e087061cbaa4107ce0b304a1ef987f6b54bae3f75bfd529cfd084cba9b5'
+    - name: APP_JAR_VERSION
+      value: ecommerce-0.0.1-SNAPSHOT.jar
+  pipelineRef:
+    name: workshop-pipelines
+  taskRunTemplate:
+    serviceAccountName: pipeline
+  timeouts:
+    pipeline: 1h0m0s
+  workspaces:
+    - name: workspace
+      persistentVolumeClaim:
+        claimName: data-workshop-pipelines-postgresql-0
