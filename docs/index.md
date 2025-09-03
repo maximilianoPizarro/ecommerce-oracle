@@ -27,7 +27,7 @@ oc get routes workshop-pipelines
 Output
 workshop-pipelines (main) $ oc get routes workshop-pipelines
 NAME               HOST/PORT                                                                            PATH   SERVICES           PORT   TERMINATION     WILDCARD
-workshop-pipelines   workshop-pipelines-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com          workshop-pipelines   http   edge/Redirect   None
+workshop-pipelines   workshop-pipelines-maximilianopizarro5-dev.apps.rm2.thpm.p1.openshiftapps.com          workshop-pipelines   http   edge/Redirect   None
 ```
 
 ## Configure Triggers Web Hook
@@ -43,7 +43,7 @@ oc get routes ci-github
 Output
 workshop-pipelines (main) $ oc get routes ci-github
 NAME        HOST/PORT                                                          PATH   SERVICES       PORT            TERMINATION     WILDCARD
-ci-github   ci-github-mpizarro-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com          el-ci-github   http-listener   edge/Redirect   None
+ci-github   ci-github-mpizarro-dev.apps.rm2.thpm.p1.openshiftapps.com          el-ci-github   http-listener   edge/Redirect   None
 ```
 
 ## GitHub repository
@@ -66,7 +66,7 @@ helm repo add workshop-pipelines https://maximilianopizarro.github.io/workshop-p
 ## Install Chart with parameters
 
 ```bash
-helm install workshop-pipelines workshop-pipelines/workshop-pipelines --version "VERSION" --set route.host=workshop-pipelines-<NAMESPACE>.apps.sandbox-m2.ll9k.p1.openshiftapps.com
+helm install workshop-pipelines workshop-pipelines/workshop-pipelines --version "VERSION" --set route.host=workshop-pipelines-<NAMESPACE>.apps.rm2.thpm.p1.openshiftapps.com
 ```
 
 ```bash

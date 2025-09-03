@@ -2,7 +2,7 @@ global:
   auth:
     backend:
       enabled: true
-  clusterRouterBase: apps.example.com
+  clusterRouterBase: apps.rm2.thpm.p1.openshiftapps.com
   dynamic:
     includes:
       - dynamic-plugins.default.yaml
@@ -151,7 +151,7 @@ upstream:
       - name: K8S_CLUSTER_NAME
         value: cluster.local
       - name: K8S_CLUSTER_URL
-        value: 'https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443'
+        value: 'https://api.rm2.thpm.p1.openshiftapps.com:6443'
       - name: K8S_CLUSTER_TOKEN            
     extraVolumeMounts:
       - mountPath: /opt/app-root/src/dynamic-plugins-root
@@ -308,6 +308,8 @@ upstream:
     enabled: false
   postgresql:
     auth:
+      password: postgres
+      manage: true
       secretKeys:
         adminPasswordKey: postgres-password
         userPasswordKey: password
