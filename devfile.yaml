@@ -103,6 +103,12 @@ commands:
       component: tools
       workingDir: ${PROJECT_SOURCE}
       commandLine: 'helm repo add postgres https://charts.bitnami.com/bitnami && helm dependency build && helm package -u . -d docs && helm repo index docs/'
+  - id: helm-install-devspaces
+    exec:
+      label: 'Helm install devspaces workshop-pipelinees'
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: 'helm install workshop-pipelines docs/workshop-pipelines-0.1.5.tgz'           
   - id: helm-uninstall
     exec:
       label: 'Helm uninstall workshop-pipelines'

@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
-  name: {{ include "workshop-pipelines.fullname" . }}
+  name: pipeline-run-ecommerce
   labels:
     {{- include "workshop-pipelines.labels" . | nindent 4 }}
 spec:
