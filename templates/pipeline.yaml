@@ -2,25 +2,25 @@
 apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
-  name: {{ include "ecommerce-oracle.fullname" . }}
+  name: {{ include "workshop-pipelines.fullname" . }}
   labels:
-    {{- include "ecommerce-oracle.labels" . | nindent 4 }}
+    {{- include "workshop-pipelines.labels" . | nindent 4 }}
 spec:
   finally:
     - name: update-deployment
       params:
         - name: SCRIPT
-          value: 'oc set triggers deploy/ecommerce-oracle --from-image=ecommerce-oracle:latest -c ecommerce-oracle'
+          value: 'oc set triggers deploy/workshop-pipelines --from-image=workshop-pipelines:latest -c workshop-pipelines'
         - name: VERSION
           value: latest
       taskRef:
         kind: Task
         name: openshift-client-1-15-0
   params:
-    - default: 'https://github.com/maximilianoPizarro/ecommerce-oracle'
+    - default: 'https://github.com/maximilianoPizarro/workshop-pipelines'
       name: GIT_REPO
       type: string  
-    - default: 'image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/{{ include "ecommerce-oracle.fullname" . }}'
+    - default: 'image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/{{ include "workshop-pipelines.fullname" . }}'
       name: IMAGE_NAME
       type: string
     - default: /app
@@ -136,7 +136,7 @@ spec:
     - name: s2i-binary-build
       params:
         - name: SCRIPT
-          value: oc start-build {{ include "ecommerce-oracle.fullname" . }} --from-file=$(workspaces.manifest-dir.path)/$(params.PATH_CONTEXT)/target/$(params.APP_JAR_VERSION)
+          value: oc start-build {{ include "workshop-pipelines.fullname" . }} --from-file=$(workspaces.manifest-dir.path)/$(params.PATH_CONTEXT)/target/$(params.APP_JAR_VERSION)
         - name: VERSION
           value: latest
       runAfter:

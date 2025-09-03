@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "ecommerce-oracle.name" -}}
+{{- define "workshop-pipelines.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "ecommerce-oracle.fullname" -}}
+{{- define "workshop-pipelines.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "ecommerce-oracle.chart" -}}
+{{- define "workshop-pipelines.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "ecommerce-oracle.labels" -}}
-helm.sh/chart: {{ include "ecommerce-oracle.chart" . }}
-{{ include "ecommerce-oracle.selectorLabels" . }}
+{{- define "workshop-pipelines.labels" -}}
+helm.sh/chart: {{ include "workshop-pipelines.chart" . }}
+{{ include "workshop-pipelines.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,18 +45,18 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "ecommerce-oracle.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "ecommerce-oracle.name" . }}
+{{- define "workshop-pipelines.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "workshop-pipelines.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-app: ecommerce-oracle
+app: workshop-pipelines
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "ecommerce-oracle.serviceAccountName" -}}
+{{- define "workshop-pipelines.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "ecommerce-oracle.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "workshop-pipelines.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

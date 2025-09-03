@@ -267,7 +267,7 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>oracle-xe</artifactId>
+            <artifactId>postgresql</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -853,6 +853,19 @@
                     <artifactId>h2</artifactId>
                 </dependency>
             </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <testExcludes>
+                                <testExclude>com/ecommerce/app/config/PostgreSqlTestContainer.java</testExclude>
+                            </testExcludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <!-- This is automatically activated when working in Eclipse -->
@@ -950,11 +963,11 @@
                 <!-- default Spring profiles -->
                 <spring.profiles.active>prod${profile.api-docs}${profile.tls}${profile.e2e}${profile.no-liquibase}</spring.profiles.active>
                 <profile.test>testprod</profile.test>
-                <liquibase-plugin.hibernate-dialect>org.hibernate.dialect.Oracle12cDialect</liquibase-plugin.hibernate-dialect>
-                <liquibase-plugin.driver>oracle.jdbc.OracleDriver</liquibase-plugin.driver>
-                <liquibase-plugin.url>jdbc:oracle:thin:@localhost:1521:xe</liquibase-plugin.url>
-                <liquibase-plugin.username>system</liquibase-plugin.username>
-                <liquibase-plugin.password>oracle</liquibase-plugin.password>
+                <liquibase-plugin.hibernate-dialect>org.hibernate.dialect.PostgreSQLDialect</liquibase-plugin.hibernate-dialect>
+                <liquibase-plugin.driver>org.postgresql.Driver</liquibase-plugin.driver>
+                <liquibase-plugin.url>jdbc:postgresql://localhost:5432/ecommerce</liquibase-plugin.url>
+                <liquibase-plugin.username>ecommerce</liquibase-plugin.username>
+                <liquibase-plugin.password/>
             </properties>
             <build>
                 <plugins>
@@ -1030,17 +1043,10 @@
                 </plugins>
             </build>
             <dependencies>
-            <!-- Oracle -->
-               <dependency>
-                    <groupId>com.oracle.database.jdbc</groupId>
-                    <artifactId>ojdbc8</artifactId>
-                    <version>12.2.0.1</version>
+                <dependency>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
                 </dependency>
-               <dependency>
-                    <groupId>com.oracle.database.jdbc</groupId>
-                    <artifactId>ucp</artifactId>
-                    <version>12.2.0.1</version>
-                </dependency>  
             </dependencies>
         </profile>
         <profile>

@@ -4,12 +4,12 @@ metadata:
   version: 2.1.0
 schemaVersion: 2.2.2
 metadata:
-  name: ecommerce-oracle
+  name: workshop-pipelines
   version: 2.33.0
   description: Ecommerce Oracle Example Helm Chart on DevSpaces Red Hat OpenShift
   displayName: Ecommerce Oracle
-  icon: https://raw.githubusercontent.com/maximilianoPizarro/ecommerce-oracle/main/jhipster-icon.png
-  website: https://maximilianopizarro.github.io/ecommerce-oracle
+  icon: https://raw.githubusercontent.com/maximilianoPizarro/workshop-pipelines/main/jhipster-icon.png
+  website: https://maximilianopizarro.github.io/workshop-pipelines
   tags:
     - Java
     - JHipster
@@ -57,10 +57,10 @@ components:
 commands:
   - id: helm-add-repo
     exec:
-      label: 'Helm add repo ecommerce-oracle'
+      label: 'Helm add repo workshop-pipelines'
       component: tools
       workingDir: ${PROJECT_SOURCE}
-      commandLine: 'helm repo add ecommerce-oracle https://maximilianopizarro.github.io/ecommerce-oracle/'
+      commandLine: 'helm repo add workshop-pipelines https://maximilianopizarro.github.io/workshop-pipelines/'
   - id: helm-add-repo-developerhub
     exec:
       label: 'Helm add repo Developer Hub'
@@ -75,22 +75,22 @@ commands:
       commandLine: 'helm install redhat-developer-hub openshift-helm-charts/redhat-developer-hub -f values.yaml --version 1.7.0'
   - id: helm-install
     exec:
-      label: 'Helm install ecommerce-oracle'
+      label: 'Helm install workshop-pipelines'
       component: tools
       workingDir: ${PROJECT_SOURCE}
-      commandLine: 'helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.4'      
+      commandLine: 'helm install workshop-pipelines workshop-pipelines/workshop-pipelines --version 0.1.4'      
   - id: helm-package
     exec:
-      label: 'Helm package ecommerce-oracle'
+      label: 'Helm package workshop-pipelines'
       component: tools
       workingDir: ${PROJECT_SOURCE}
-      commandLine: 'helm repo add oracle-helm-charts https://maximilianopizarro.github.io/oracle-helm-charts/ && helm dependency build && helm package -u . -d charts && helm repo index .'      
+      commandLine: 'helm dependency build && helm package -u . -d docs && helm repo index docs/'      
   - id: helm-uninstall
     exec:
-      label: 'Helm uninstall ecommerce-oracle'
+      label: 'Helm uninstall workshop-pipelines'
       component: tools
       workingDir: ${PROJECT_SOURCE}
-      commandLine: 'helm uninstall ecommerce-oracle'
+      commandLine: 'helm uninstall workshop-pipelines'
   - id: helm-uninstall-developerhub
     exec:
       label: 'Helm uninstall Developer Hub'

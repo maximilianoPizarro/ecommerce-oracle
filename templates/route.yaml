@@ -2,16 +2,16 @@
 kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
-  name: {{ include "ecommerce-oracle.fullname" . }}
+  name: {{ include "workshop-pipelines.fullname" . }}
   labels:
-    {{- include "ecommerce-oracle.labels" . | nindent 4 }}
+    {{- include "workshop-pipelines.labels" . | nindent 4 }}
 spec:
   {{- if .Values.route.host }}
   host: {{ .Values.route.host }}
   {{- end }}
   to:
     kind: Service
-    name: {{ include "ecommerce-oracle.fullname" . }}
+    name: {{ include "workshop-pipelines.fullname" . }}
     weight: 100
   port:
     targetPort: http

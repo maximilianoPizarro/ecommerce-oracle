@@ -1,19 +1,19 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: "ecommerce-oracle"
+  name: "workshop-pipelines"
   description: "E-Commerce Oracle for Red Hat Developer Hub"
   annotations:
-    github.com/project-slug: maximilianopizarro/ecommerce-oracle
+    github.com/project-slug: maximilianopizarro/workshop-pipelines
     backstage.io/techdocs-ref: dir:.
     backstage.io/kubernetes-namespace: maximilianopizarro5-dev
-    backstage.io/kubernetes-id: ecommerce-oracle
-    janus-idp.io/tekton : ecommerce-oracle
-    backstage.io/kubernetes-label-selector: 'app=ecommerce-oracle'
+    backstage.io/kubernetes-id: workshop-pipelines
+    janus-idp.io/tekton : workshop-pipelines
+    backstage.io/kubernetes-label-selector: 'app=workshop-pipelines'
   links:
     - title: Documentation
-      url: https://github.com/maximilianoPizarro/ecommerce-oracle/blob/main/README.md 
-    - url: https://workspaces.openshift.com/#https://github.com/maximilianoPizarro/ecommerce-oracle/tree/main?storageType=ephemeral
+      url: https://github.com/maximilianoPizarro/workshop-pipelines/blob/main/README.md 
+    - url: https://workspaces.openshift.com/#https://github.com/maximilianoPizarro/workshop-pipelines/tree/main?storageType=ephemeral
       title: OpenShift Dev Spaces (VS Code)
       icon: web
   tags:

@@ -4,7 +4,7 @@
 
 ## Open in OpenShift Dev Spaces
 
-[![Open](https://img.shields.io/static/v1?label=Open%20in&message=Developer%20Sandbox&logo=eclipseche&color=FDB940&labelColor=525C86)](https://workspaces.openshift.com/#https://github.com/maximilianoPizarro/ecommerce-oracle/tree/main?storageType=ephemeral)
+[![Open](https://img.shields.io/static/v1?label=Open%20in&message=Developer%20Sandbox&logo=eclipseche&color=FDB940&labelColor=525C86)](https://workspaces.openshift.com/#https://github.com/maximilianoPizarro/workshop-pipelines/tree/main?storageType=ephemeral)
 
 ## Run tasks
 
@@ -20,14 +20,14 @@ Access to the home page to the Web App.
 Get the Web App Route with "oc get route" command from the terminal.
 
 ```bash
-oc get routes ecommerce-oracle
+oc get routes workshop-pipelines
 ```
 
 ```bash
 Output
-ecommerce-oracle (main) $ oc get routes ecommerce-oracle
+workshop-pipelines (main) $ oc get routes workshop-pipelines
 NAME               HOST/PORT                                                                            PATH   SERVICES           PORT   TERMINATION     WILDCARD
-ecommerce-oracle   ecommerce-oracle-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com          ecommerce-oracle   http   edge/Redirect   None
+workshop-pipelines   workshop-pipelines-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com          workshop-pipelines   http   edge/Redirect   None
 ```
 
 ## Configure Triggers Web Hook
@@ -41,15 +41,15 @@ oc get routes ci-github
 
 ```bash
 Output
-ecommerce-oracle (main) $ oc get routes ci-github
+workshop-pipelines (main) $ oc get routes ci-github
 NAME        HOST/PORT                                                          PATH   SERVICES       PORT            TERMINATION     WILDCARD
 ci-github   ci-github-mpizarro-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com          el-ci-github   http-listener   edge/Redirect   None
 ```
 
 ## GitHub repository
 
-- [GitHub Page](https://maximilianopizarro.github.io/ecommerce-oracle/)
-- [GitHub Repo](https://github.com/maximilianoPizarro/ecommerce-oracle)
+- [GitHub Page](https://maximilianopizarro.github.io/workshop-pipelines/)
+- [GitHub Repo](https://github.com/maximilianoPizarro/workshop-pipelines)
 
 
 # Install From Helm Charts Command
@@ -60,25 +60,25 @@ ci-github   ci-github-mpizarro-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com    
 ## Add repository
 
 ```bash
-helm repo add ecommerce-oracle https://maximilianopizarro.github.io/ecommerce-oracle/
+helm repo add workshop-pipelines https://maximilianopizarro.github.io/workshop-pipelines/
 ```
 
 ## Install Chart with parameters
 
 ```bash
-helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version "VERSION" --set route.host=ecommerce-oracle-<NAMESPACE>.apps.sandbox-m2.ll9k.p1.openshiftapps.com
+helm install workshop-pipelines workshop-pipelines/workshop-pipelines --version "VERSION" --set route.host=workshop-pipelines-<NAMESPACE>.apps.sandbox-m2.ll9k.p1.openshiftapps.com
 ```
 
 ```bash
 Example:
-helm install ecommerce-oracle ecommerce-oracle/ecommerce-oracle --version 0.1.3
+helm install workshop-pipelines workshop-pipelines/workshop-pipelines --version 0.1.3
 ```
 
 
 ## Uninstall Chart
 
 ```bash
-helm uninstall ecommerce-oracle
+helm uninstall workshop-pipelines
 ```
 
 ## Package Steps Local Build

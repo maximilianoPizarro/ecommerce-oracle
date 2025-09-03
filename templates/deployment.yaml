@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "ecommerce-oracle.fullname" . }}
+  name: {{ include "workshop-pipelines.fullname" . }}
   labels:
-    {{- include "ecommerce-oracle.labels" . | nindent 4 }}
+    {{- include "workshop-pipelines.labels" . | nindent 4 }}
     app.openshift.io/runtime: spring-boot
   annotations:
     app.openshift.io/connects-to: '[{"apiVersion":"apps/v1","kind":"Deployment","name":"oracle12c"}]'    
@@ -13,7 +13,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "ecommerce-oracle.selectorLabels" . | nindent 6 }}
+      {{- include "workshop-pipelines.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -21,13 +21,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "ecommerce-oracle.selectorLabels" . | nindent 8 }}
+        {{- include "workshop-pipelines.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "ecommerce-oracle.serviceAccountName" . }}
+      serviceAccountName: {{ include "workshop-pipelines.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:

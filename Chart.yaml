@@ -1,5 +1,5 @@
 apiVersion: v2
-name: ecommerce-oracle
+name: workshop-pipelines
 description: A JHipster Oracle Helm chart example for Kubernetes
 
 # A chart can be either an 'application' or a 'library' chart.
@@ -24,21 +24,22 @@ version: 0.1.4
 appVersion: "0.0.1-SNAPSHOT"
 
 keywords:
-- oracle
+- postgresql
 - database
 - spring
 - openshift
 
-home: https://maximilianopizarro.github.io/ecommerce-oracle/
+home: https://maximilianopizarro.github.io/workshop-pipelines/
 
 maintainers: # (optional)
   - name: Maximiliano Pizarro
     email: maximiliano.pizarro.5@gmail.com
     url: http://www.linkedin.com/in/maximiliano-gregorio-pizarro-consultor-it
 
-icon: https://raw.githubusercontent.com/maximilianoPizarro/oracle-helm-charts/main/oracle-icon.png
+icon: https://raw.githubusercontent.com/maximilianoPizarro/workshop-pipelines/main/logo-rhel.png
 
 dependencies:
-- name: oracle12c
-  version: "0.1.0"
-  repository: "https://maximilianopizarro.github.io/oracle-helm-charts/"
+- condition: postgresql.enabled
+  name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 15.5.38

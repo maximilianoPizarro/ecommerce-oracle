@@ -106,12 +106,7 @@ describe('Service Tests', () => {
       });
 
       it('should partial update a Country', async () => {
-        const patchObject = Object.assign(
-          {
-            countryName: 'BBBBBB',
-          },
-          new Country(),
-        );
+        const patchObject = Object.assign({}, new Country());
         const returnedFromService = Object.assign(patchObject, elemDefault);
 
         const expected = Object.assign({}, returnedFromService);

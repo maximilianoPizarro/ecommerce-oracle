@@ -22,7 +22,7 @@
     "nativeLanguage": "es",
     "packageFolder": "com/ecommerce/app",
     "packageName": "com.ecommerce.app",
-    "prodDatabaseType": "oracle",
+    "prodDatabaseType": "postgresql",
     "skipCommitHook": true
   }
 }

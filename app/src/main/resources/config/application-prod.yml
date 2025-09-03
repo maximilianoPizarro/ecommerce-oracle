@@ -33,22 +33,12 @@ spring:
       enabled: false
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:oracle:thin:@localhost:1521:ORCLCDB
-    username: sys as sysdba
-    password: Oradoc_db1
+    url: jdbc:postgresql://workshop-pipelines-postgresql:5432/workshop-pipelines
+    username: postgres
+    password: postgres
     hikari:
       poolName: Hikari
       auto-commit: false
-  jpa:
-    database-platform: org.hibernate.dialect.Oracle12cDialect
-    database: ORACLE
-    show-sql: true
-    properties:
-      hibernate.id.new_generator_mappings: true
-      hibernate.connection.provider_disables_autocommit: true
-      hibernate.cache.use_second_level_cache: false
-      hibernate.cache.use_query_cache: false
-      hibernate.generate_statistics: true
   # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
   liquibase:
     contexts: prod

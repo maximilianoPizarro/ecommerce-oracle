@@ -1,12 +1,12 @@
-# Default values for ecommerce-oracle.
+# Default values for workshop-pipelines.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-#  repository: image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/ecommerce-oracle
-  repository: quay.io/maximilianopizarro/ecommerce-oracle
+#  repository: image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/workshop-pipelines
+  repository: quay.io/maximilianopizarro/workshop-pipelines
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
@@ -48,7 +48,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: ecommerce-oracle-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com
+    - host: workshop-pipelines-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com
       paths:
         - path: /
           pathType: ImplementationSpecific
@@ -59,7 +59,7 @@ ingress:
 
 route:
   enabled: true  
-  host: ecommerce-oracle-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com
+  host: workshop-pipelines-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -90,6 +90,36 @@ affinity: {}
 env:
   SPRING_PROFILES_ACTIVE: prod,api-docs
   JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET: YlhrdGMyVmpjbVYwTFhSdmEyVnVMWFJ2TFdOb1lXNW5aUzFwYmkxd2NtOWtkV04wYVc5dUxXRnVaQzEwYnkxclpXVndMV2x1TFdFdGMyVmpkWEpsTFhCc1lXTmwK
-  SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle12c:1521:ORCLCDB
-  SPRING_DATASOURCE_USERNAME: sys as sysdba
-  SPRING_DATASOURCE_PASSWORD: Oradoc_db1  
+  SPRING_DATASOURCE_URL: jdbc:postgresql://workshop-pipelines-postgresql:5432/workshop-pipelines
+  SPRING_DATASOURCE_USERNAME: postgres
+  SPRING_DATASOURCE_PASSWORD: postgres
+  JDK_JAVA_OPTIONS: -Xms1G -Xmx2G -XX:-UseGCOverheadLimit -XX:-ExitOnOutOfMemoryError -XX:+UseParallelGC -Dfile.encoding=UTF8 -Duser.timezone=America/Buenos_Aires
+  JAVA_MAX_MEM_RATIO: 85
+  JAVA_INITIAL_MEM_RATIO: 50
+  JAVA_MAX_INITIAL_MEM: 2048
+  GC_MAX_METASPACE_SIZE: 1024
+
+postgresql:
+  auth:
+    database: workshop-pipelines
+    username: postgres
+    password: postgres 
+  enabled: true
+  image:
+    registry: ghcr.io
+    repository: bat-bs/bitnami-pgvector
+    tag: pg16
+
+  primary:
+    initdb:
+      scripts:
+        create-librechat-db.sql: |
+          -- Ensure the database exists
+          CREATE DATABASE "workshop-pipelines" WITH OWNER postgres;
+
+          -- Connect to the new database and create the pgvector extension
+          \c workshop-pipelines
+          CREATE EXTENSION IF NOT EXISTS vector;
+          
+          -- CREATE USER postgres WITH PASSWORD 'postgres';
+          -- GRANT ALL PRIVILEGES ON DATABASE "workshop-pipelines" TO postgres;

@@ -109,7 +109,7 @@ describe('Service Tests', () => {
       it('should partial update a Producto', async () => {
         const patchObject = Object.assign(
           {
-            descripcion: 'BBBBBB',
+            nombre: 'BBBBBB',
           },
           new Producto(),
         );

@@ -3,7 +3,7 @@ kind: Secret
 metadata:
   name: github-secret
   labels:
-    {{- include "ecommerce-oracle.labels" . | nindent 4 }}  
+    {{- include "workshop-pipelines.labels" . | nindent 4 }}  
 type: Opaque
 stringData:
   secretToken: MTIzNDU2Nw==
@@ -13,7 +13,7 @@ kind: EventListener
 metadata:
   name: ci-github
   labels:
-    {{- include "ecommerce-oracle.labels" . | nindent 4 }}
+    {{- include "workshop-pipelines.labels" . | nindent 4 }}
 spec:
   namespaceSelector: {}
   resources: {}
@@ -45,16 +45,16 @@ spec:
             - apiVersion: tekton.dev/v1
               kind: PipelineRun
               metadata:
-                generateName: ecommerce-oracle-
+                generateName: workshop-pipelines-
                 labels:
-                  tekton.dev/pipeline: ecommerce-oracle
-                  app: ecommerce-oracle
+                  tekton.dev/pipeline: workshop-pipelines
+                  app: workshop-pipelines
               spec:
                 params:
                   - name: GIT_REPO
                     value: $(tt.params.gitrepositoryurl)                
                   - name: IMAGE_NAME
-                    value: 'image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/ecommerce-oracle'
+                    value: 'image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/workshop-pipelines'
                   - name: PATH_CONTEXT
                     value: /app
                   - name: MAVEN_IMAGE
@@ -62,7 +62,7 @@ spec:
                   - name: APP_JAR_VERSION
                     value: ecommerce-0.0.1-SNAPSHOT.jar
                 pipelineRef:
-                  name: ecommerce-oracle
+                  name: workshop-pipelines
                 taskRunTemplate:
                   serviceAccountName: pipeline
                 timeouts:
@@ -86,7 +86,7 @@ apiVersion: route.openshift.io/v1
 metadata:
   name: ci-github
   labels:
-    {{- include "ecommerce-oracle.labels" . | nindent 4 }}
+    {{- include "workshop-pipelines.labels" . | nindent 4 }}
 spec:
   to:
     kind: Service

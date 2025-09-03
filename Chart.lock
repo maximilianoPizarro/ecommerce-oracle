@@ -1,6 +1,6 @@
 dependencies:
-- name: oracle12c
-  repository: https://maximilianopizarro.github.io/oracle-helm-charts/
-  version: 0.1.0
-digest: sha256:de84abcd1beb24f00d76441536ae85fa5efcf97263ab5b6f18fbc7efa9bd66ea
-generated: "2024-03-27T13:33:34.221220356Z"
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 15.5.38
+digest: sha256:6dbed6171e0b736f43c92dadf97cfc4014555bfc0a4a2a760c4207b8b1b3095e
+generated: "2025-09-03T18:45:43.152539023Z"
