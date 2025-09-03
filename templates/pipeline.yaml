@@ -1,82 +1,3 @@
-kind: BuildConfig
-apiVersion: build.openshift.io/v1
-metadata:
-  name: {{ include "ecommerce-oracle.fullname" . }}
-  labels:
-    {{- include "ecommerce-oracle.labels" . | nindent 4 }}
-spec:
-  nodeSelector: null
-  output:
-    to:
-      kind: ImageStreamTag
-      name: '{{ include "ecommerce-oracle.fullname" . }}:latest'
-  resources: {}
-  successfulBuildsHistoryLimit: 5
-  failedBuildsHistoryLimit: 5
-  strategy:
-    type: Source
-    sourceStrategy:
-      from:
-        kind: DockerImage
-        name: >-
-          image-registry.openshift-image-registry.svc:5000/openshift/ubi8-openjdk-17:1.12
-      incremental: true
-  postCommit: {}
-  source:
-    type: Binary
-    binary: {}
-  runPolicy: Serial
----
-kind: ImageStream
-apiVersion: image.openshift.io/v1
-metadata:
-  name: {{ include "ecommerce-oracle.fullname" . }}
-  labels:
-    {{- include "ecommerce-oracle.labels" . | nindent 4 }}
-spec:
-  lookupPolicy:
-    local: false
----
-apiVersion: tekton.dev/v1
-kind: Task
-metadata:
-  name: npm
-  labels:
-    {{- include "ecommerce-oracle.labels" . | nindent 4 }}  
-spec:
-  description: >-
-    This task can be used to run npm goals on a project.
-
-    This task can be used to run npm goals on a project where package.json is
-    present and has some pre-defined npm scripts.
-  params:
-    - default: .
-      description: The path where package.json of the project is defined.
-      name: PATH_CONTEXT
-      type: string
-    - default:
-        - version
-      description: The npm goals you want to run.
-      name: ARGS
-      type: array
-    - default: 'docker.io/library/node:18.18.2-alpine'
-      description: The node image you want to use.
-      name: IMAGE
-      type: string
-  steps:
-    - args:
-        - $(params.ARGS)
-      command:
-        - npm
-      computeResources: {}
-      env:
-        - name: CI
-          value: 'true'
-      image: $(params.IMAGE)
-      name: npm-run
-      workingDir: $(workspaces.source.path)/$(params.PATH_CONTEXT)
-  workspaces:
-    - name: source
 ---
 apiVersion: tekton.dev/v1
 kind: Pipeline
@@ -93,7 +14,7 @@ spec:
         - name: VERSION
           value: latest
       taskRef:
-        kind: ClusterTask
+        kind: Task
         name: openshift-client-1-15-0
   params:
     - default: 'https://github.com/maximilianoPizarro/ecommerce-oracle'
@@ -146,13 +67,15 @@ spec:
       runAfter:
         - npm
       taskRef:
-        kind: ClusterTask
+        kind: Task
         name: maven
       workspaces:
         - name: source
           workspace: workspace
         - name: maven-settings
           workspace: workspace
+        - name: maven-local-repo
+          workspace: workspace          
     - name: git-clone
       params:
         - name: url
@@ -188,7 +111,7 @@ spec:
         - name: userHome
           value: /home/git
       taskRef:
-        kind: ClusterTask
+        kind: Task
         name: git-clone
       workspaces:
         - name: output
@@ -219,111 +142,11 @@ spec:
       runAfter:
         - maven
       taskRef:
-        kind: ClusterTask
+        kind: Task
         name: openshift-client
       workspaces:
         - name: manifest-dir
           workspace: workspace
   workspaces:
-    - name: workspace
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: github-secret
-  labels:
-    {{- include "ecommerce-oracle.labels" . | nindent 4 }}  
-type: Opaque
-stringData:
-  secretToken: MTIzNDU2Nw==
----
-apiVersion: triggers.tekton.dev/v1beta1
-kind: EventListener
-metadata:
-  name: ci-github
-  labels:
-    {{- include "ecommerce-oracle.labels" . | nindent 4 }}
-spec:
-  namespaceSelector: {}
-  resources: {}
-  serviceAccountName: pipeline
-  triggers:
-    - bindings:
-        - kind: TriggerBinding
-          name: gitrepositoryurl
-          value: $(body.repository.html_url)
-      interceptors:
-        - name: verify-github-payload
-          params:
-            - name: secretRef
-              value:
-                secretKey: secretToken
-                secretName: github-secret
-            - name: eventTypes
-              value:
-                - push
-          ref:
-            kind: ClusterInterceptor
-            name: github
-      name: github-push-events-trigger
-      template:
-        spec:
-          params:
-            - name: gitrepositoryurl
-          resourcetemplates:
-            - apiVersion: tekton.dev/v1
-              kind: PipelineRun
-              metadata:
-                generateName: ecommerce-oracle-
-                labels:
-                  tekton.dev/pipeline: ecommerce-oracle
-                  app: ecommerce-oracle
-              spec:
-                params:
-                  - name: GIT_REPO
-                    value: $(tt.params.gitrepositoryurl)                
-                  - name: IMAGE_NAME
-                    value: 'image-registry.openshift-image-registry.svc:5000/maximilianopizarro5-dev/ecommerce-oracle'
-                  - name: PATH_CONTEXT
-                    value: /app
-                  - name: MAVEN_IMAGE
-                    value: 'registry.redhat.io/ubi8/openjdk-17@sha256:af305e087061cbaa4107ce0b304a1ef987f6b54bae3f75bfd529cfd084cba9b5'
-                  - name: APP_JAR_VERSION
-                    value: ecommerce-0.0.1-SNAPSHOT.jar
-                pipelineRef:
-                  name: ecommerce-oracle
-                taskRunTemplate:
-                  serviceAccountName: pipeline
-                timeouts:
-                  pipeline: 1h0m0s
-                workspaces:
-                  - name: workspace
-                    volumeClaimTemplate:
-                      metadata:
-                        creationTimestamp: null
-                      spec:
-                        accessModes:
-                          - ReadWriteOnce
-                        resources:
-                          requests:
-                            storage: 4Gi
-                        storageClassName: gp2
-                        volumeMode: Filesystem
----
-kind: Route
-apiVersion: route.openshift.io/v1
-metadata:
-  name: ci-github
-  labels:
-    {{- include "ecommerce-oracle.labels" . | nindent 4 }}
-spec:
-  to:
-    kind: Service
-    name: el-ci-github
-    weight: 100
-  port:
-    targetPort: http-listener
-  tls:
-    termination: edge
-    insecureEdgeTerminationPolicy: Redirect                              
+    - name: workspace                        
 
