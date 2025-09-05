@@ -13,6 +13,20 @@
 <img src="https://github.com/maximilianoPizarro/workshop-pipelines/blob/main/app/ecommerce-architect.png?raw=true" width="900" title="Run On Openshift">
 </p>
 
+# Getting Started: Fork and Personalize Your Environment
+
+Before starting the workshop, it is recommended to **fork this repository** into your own GitHub account. This allows you to work independently and save your progress.
+
+After forking, you must **replace all default values related to the OpenShift namespace** with the namespace assigned to your user in Developer Sandbox. By default, the configuration uses `maximilianopizarro5-dev` as the namespace. You should update this value in all relevant files using your editor, replacing it with your own namespace (usually based on your Red Hat account username).
+
+<p align="left">
+<img src="https://github.com/maximilianoPizarro/workshop-pipelines/blob/main/app/namespaces-dev.png?raw=true" width="900" title="Run On Openshift">
+</p>
+
+This step is essential to ensure that all routes, URLs, and deployments work correctly in your personal Developer Sandbox environment.
+
+- [GitHub Repo](https://github.com/maximilianoPizarro/workshop-pipelines)
+
 # What is OpenShift Pipelines?
 
 OpenShift Pipelines is a Kubernetes-native CI/CD solution based on Tekton. It allows you to define and run build, test, and deployment workflows using custom resources. Pipelines are composed of several objects:
@@ -257,4 +271,6 @@ helm uninstall workshop-pipelines
 
 - [Home Page](https://maximilianopizarro.github.io/workshop-pipelines/)
 - [GitHub Repo](https://github.com/maximilianoPizarro/workshop-pipelines)
+
+
 
